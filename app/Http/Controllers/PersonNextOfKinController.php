@@ -51,12 +51,15 @@ class PersonNextOfKinController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(PersonNextOfKin $personNextOfKin)
+    public function show($id)
     {
         // retrieves and displays a specific PersonNextOfKin record
 
 
-        return view('person-next-of-kin.show', compact('personNextOfKin'));
+        // Fetch single personnextofkin by id
+        
+        $personNextOfKin = PersonNextOfKin::findOrFail($id);
+        return response()->json($personNextOfKin); 
     }
 
     /**
