@@ -2,6 +2,18 @@
 
 use App\Http\Controllers\HouseHoldController;
 use App\Http\Controllers\HouseHoldAdressController;
+use App\Http\Controllers\HouseHoldMembershipController;
+use App\Http\Controllers\HouseholdMemberTypeController;
+use App\Http\Controllers\ResidenceController;
+use App\Http\Controllers\AdministrativeHierachyController;
+use App\Http\Controllers\PersonContactsController;
+use App\Http\Controllers\PersonIdentificationTypeController;
+use App\Http\Controllers\PersonNextOfKinController;
+use App\Http\Controllers\UserController;
+
+
+
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -31,6 +43,29 @@ Route::get('/householdmembership/search/{household_person_details_id}', [HouseHo
 //HouseholdMemberType API endpoints
 Route::resource('householdmembertype', HouseholdMemberTypeController::class);
 Route::get('/householdmembertype/search/{household_membership_name}', [HouseholdMemberTypeController::class, 'search']);
+
+// AdministrativeHierachy model CRUD endpoints
+Route::resource('administrativehierachy', AdministrativeHierachyController::class);
+
+// PersonContacts model CRUD endpoints
+Route::resource('personcontacts', PersonContactsController::class);
+
+
+// PersonIdentificationType model CRUD endpoints
+Route::resource('personidentificationtype', PersonIdentificationTypeController::class);
+
+
+// PersonNextOfKin model CRUD endpoints
+Route::resource('personnextofkin', PersonNextOfKinController::class);
+
+//Residence model CRUD endpoints
+Route::resource('residences', ResidenceController::class);
+
+// Personnext model CRUD endpoints
+Route::resource('user', UserController::class);
+
+
+
 
 
 
