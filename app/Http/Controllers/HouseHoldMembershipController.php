@@ -32,7 +32,8 @@ class HouseHoldMembershipController extends Controller
      */
     public function show(string $id)
     {
-        return HouseHoldMembership::find($id);
+        $householdmembership = HouseHoldMembership::findOrFail($id);
+        return response()->json($householdmembership);
     }
 
     /**

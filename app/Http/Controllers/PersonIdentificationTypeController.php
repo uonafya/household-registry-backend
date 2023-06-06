@@ -49,11 +49,13 @@ class PersonIdentificationTypeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(PersonIdentificationType $personIdentificationType)
+    public function show($id)
     {
         //
-        // Retrieve a specific person identification type
-        return response()->json($personIdentificationType);
+        // Fetch single personnextofkin by id
+        
+        $personidentificationType = personIdentificationType::findOrFail($id);
+        return response()->json($personidentificationType);
     }
 
     /**

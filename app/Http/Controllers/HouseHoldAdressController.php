@@ -34,9 +34,10 @@ class HouseHoldAdressController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show( string $id)
     {
-        return HouseHoldAdress::find($id);
+        $householdadress = HouseHoldAdress::findOrFail($id);
+        return response()->json($householdadress);
     }
 
     /**

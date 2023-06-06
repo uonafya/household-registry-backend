@@ -7,70 +7,92 @@ use Illuminate\Http\Request;
 
 class ResidenceController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
     public function index()
     {
-        //
+        // GEt request...fetch all residences
 
-        $residences = Residence::all();
-        return response()->json($residences);
+        try {
+            $residences = Residence::all();
+            return response()->json($residences);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to fetch residences'], 500);
+        }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+ 
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+  
     public function store(Request $request)
     {
-        //
-        $residence = Residence::create($request->all());
-        return response()->json($residence, 201);
+        // POST request...create a residence
+
+        try {
+            $residence = Residence::create($request->all());
+            return response()->json($residence, 201);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to create residence'], 500);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Residence $residence)
+   
+    public function show(string $id)
     {
-        //
-        return response()->json($residence);
+        // Fetch single residence by id---GET
+
+        try {
+            $residence = Residence::findOrFail($id);
+            // If the residence is found, return it as a response
+            return response()->json([
+                'data' => $residence,
+                'message' => 'Residence retrieved successfully',
+            ], 200);
+        } catch (\Exception $e) {
+            // If the residence is not found, return an error response
+            return response()->json([
+                'message' => 'Residence not found',
+            ], 404);
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+   
     public function edit(Residence $residence)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Residence $residence)
+    
+    public function update(Request $request, $id)
     {
-        //
-        $residence->update($request->all());
-        return response()->json($residence);
+        // PUT/ PATCH...update a residence
+        try {
+            $residence = Residence::findOrFail($id);
+            $residence->update($request->all());
+            return response()->json($residence);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to update residence'], 500);
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Residence $residence)
-    {
-        //
+  
+    public function destroy($id)
+    {   
 
-        $residence->delete();
-        return response()->json(null, 204);
+        // Delete request...delete a residence
+
+        try {
+            $residence = Residence::findOrFail($id);
+            $residence->delete();
+            return response()->json(['message' => 'Residence deleted successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to delete residence'], 500);
+        }
     }
+
+
 }
+

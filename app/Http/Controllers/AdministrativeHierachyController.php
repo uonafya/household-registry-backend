@@ -50,8 +50,8 @@ class AdministrativeHierachyController extends Controller
     public function show($id)
     {
         //
-        $administrativeHierarchy = AdministrativeHierachy::findOrFail($id);
-        return $administrativeHierarchy;
+        $administrativehierarchy = AdministrativeHierachy::findOrFail($id);
+        return $administrativehierarchy;
     }
 
     /**

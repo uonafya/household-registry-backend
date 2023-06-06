@@ -33,6 +33,7 @@ class PersonContactsController extends Controller
         //
         $personContacts = PersonContacts::create($request->all());
         return response()->json($personContacts, 201);
+        
     }
 
     /**
