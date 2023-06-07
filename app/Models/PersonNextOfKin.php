@@ -12,7 +12,7 @@ class PersonNextOfKin extends Model
     protected $fillable = [
         'name',
         'relationship',
-        'residence',
+        'residence_id',
         'contact_id',
     ];
 

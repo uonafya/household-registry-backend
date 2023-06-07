@@ -8,58 +8,87 @@ use Illuminate\Http\Request;
 class HouseholdMemberTypeController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * GET request - a listing of the member types.
      */
     public function index()
     {
-        return HouseholdMemberType::all();
+        try {
+            $householdmembertype = HouseholdMemberType::all();
+            return response()->json($householdmembertype);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to fetch household member types'], 500);
+        }
     }
 
     /**
-     * Store a newly created resource in storage.
+     * POST request - Store a newly created member type.
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'household_membership_type_id' => 'required',
-            'household_membership_name' => 'required'
-        ]);
 
-        return HouseholdMemberType::create($request->all());
+        try {
+            $householdmembertype = HouseholdMemberType::create($request->all());
+            return response()->json($householdmembertype, 201);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to create household member type'], 500);
+        }
     }
 
     /**
-     * Display the specified resource.
+     * GET request - Fetch the specified member type.
      */
     public function show($id)
     {
-        $householdmembertype = HouseholdMemberType::findOrFail($id);
-        return response()->json($householdmembertype);
+        try {
+            $householdmembertype = HouseholdMemberType::findOrFail($id);
+            // If the member type is found, return it as a json response
+            return response()->json([
+                'data' => $householdmembertype,
+                'message' => 'Household member type retrieved successfully'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Household member type not found'], 404);
+        }
     }
 
     /**
-     * Update the specified resource in storage.
+     * PUT request - Update the specified member type in db.
      */
     public function update(Request $request, string $id)
     {
-        $hh_member_type = HouseholdMemberType::find($id);
-        $hh_member_type->update($request->all());
-        return $hh_member_type;
+        try {
+            $householdmembertype = HouseholdMemberType::findOrFail($id);
+            $householdmembertype->update($request->all());
+            return response()->json($householdmembertype, 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to update household member type'], 500);
+        }
     }
 
     /**
-     * Remove the specified resource from storage.
+     * DELETE request - Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
-        return HouseholdMemberType::destroy($id);
+        try {
+            $householdmembertype = HouseholdMemberType::findOrFail($id);
+            $householdmembertype->delete();
+            return response()->json(['message' => 'Household member type deleted successfully'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to delete household member type'], 500);
+        }
     }
 
     /**
-     * Search the specified HH member type from storage.
+     * GET request - Search the specified HH member type from storage.
      */
     public function search(string $household_membership_name)
     {
-        return HouseholdMemberType::where('household_membership_name', 'like', '%'.$household_membership_name.'%')->get();
+        try {
+            $householdmembertype = HouseholdMemberType::where('household_membership_name', 'like', '%' . $household_membership_name . '%')->get();
+            return response()->json($householdmembertype, 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to search household member type'], 500);
+        }
     }
 }

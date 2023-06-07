@@ -19,11 +19,11 @@ class HouseHoldAdress extends Model
 
 
     protected $fillable = [
-        'householdTypeId',
-        'areaTypeId',
-        'areaName',
-        'areaCode',
-        'parentAreaId',
+        'household_type_id',
+        'area_type_id',
+        'area_name',
+        'area_code',
+        'parent_area_id',
     ];
 
     public function houseHold()

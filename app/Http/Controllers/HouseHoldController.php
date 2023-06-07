@@ -12,7 +12,15 @@ class HouseHoldController extends Controller
      */
     public function index()
     {
-        return HouseHold::all();
+        try {
+            // GET request - Get a listing of all the household.
+            $household = HouseHold::all();
+            // If the household are found, return them as a json response
+            return response()->json($household);
+        } catch (\Exception $e) {
+            // If the household are not found, return an error response
+            return response()->json(['message' => 'Failed to fetch household'], 500);
+        }
     }
 
     /**
@@ -20,14 +28,13 @@ class HouseHoldController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'household_name' => 'required',
-            'household_identifier' => 'required',
-            'household_type_id' => 'required',
-            'household_address_id' => 'required',
-        ]);
-
-        return HouseHold::create($request->all());
+        try {
+            // POST request...create a household
+            $household = HouseHold::create($request->all());
+            return response()->json($household, 201);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to create household'], 500);
+        }
     }
 
     /**
@@ -35,8 +42,18 @@ class HouseHoldController extends Controller
      */
     public function show($id)
     {
-        $household = HouseHold::findOrFail($id);
-        return response()->json($household);
+        try {
+            // Fetch single household by id---GET
+            $household = HouseHold::findOrFail($id);
+            // If the household is found, return it as a json response
+            return response()->json([
+                'data' => $household,
+                'message' => 'Household retrieved successfully'
+            ], 200);
+        } catch (\Exception $e) {
+            // If the household is not found, return an error response
+            return response()->json(['message' => 'Household not found'], 404);
+        }
     }
 
     /**
@@ -44,9 +61,14 @@ class HouseHoldController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $household = HouseHold::find($id);
-        $household->update($request->all());
-        return $household;
+        try {
+            // PUT/PATCH request...update a household
+            $household = HouseHold::findOrFail($id);
+            $household->update($request->all());
+            return response()->json($household, 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to update household'], 500);
+        }
     }
 
     /**
@@ -54,7 +76,14 @@ class HouseHoldController extends Controller
      */
     public function destroy(string $id)
     {
-        return HouseHold::destroy($id);
+        try {
+            // DELETE request...delete a household
+            $household = HouseHold::findOrFail($id);
+            $household->delete();
+            return response()->json(['message' => 'Household deleted successfully'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to delete household'], 500);
+        }
     }
 
     /**
@@ -62,6 +91,12 @@ class HouseHoldController extends Controller
      */
     public function search(string $household_name)
     {
-        return HouseHold::where('household_name', 'like', '%'.$household_name.'%')->get();
+        try {
+            // GET request...search for a household
+            $household = HouseHold::where('household_name', 'like', '%' . $household_name . '%')->get();
+            return response()->json($household, 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to search for household'], 500);
+        }
     }
 }

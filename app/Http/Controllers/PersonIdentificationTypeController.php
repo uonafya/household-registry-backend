@@ -12,11 +12,17 @@ class PersonIdentificationTypeController extends Controller
      */
     public function index()
     {
-        //
-        // Retrieve all person identification types
-        $personIdentificationTypes = PersonIdentificationType::all();
-
-        return response()->json($personIdentificationTypes);
+        try {
+            // Fetch all person identification types
+            $personIdentificationTypes = PersonIdentificationType::all();
+            return response()->json($personIdentificationTypes);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json([
+                'message' => 'Error fetching person identification types',
+                'error' => $th->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -32,18 +38,24 @@ class PersonIdentificationTypeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            // Validate the request data
+            $validatedData = $request->validate([
+                'identification_type' => 'required',
+                'identification_number' => 'required',
+            ]);
 
-          // Validate the request data
-          $validatedData = $request->validate([
-            'identification_type' => 'required',
-            'identification_number' => 'required',
-        ]);
+            // Create a person identification type
+            $personIdentificationType = PersonIdentificationType::create($validatedData);
 
-        // Create a new person identification type
-        $personIdentificationType = PersonIdentificationType::create($validatedData);
-
-        return response()->json($personIdentificationType, 201);
+            return response()->json($personIdentificationType);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json([
+                'message' => 'Error creating person identification type',
+                'error' => $th->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -51,11 +63,17 @@ class PersonIdentificationTypeController extends Controller
      */
     public function show($id)
     {
-        //
-        // Fetch single personnextofkin by id
-        
-        $personidentificationType = personIdentificationType::findOrFail($id);
-        return response()->json($personidentificationType);
+        try {
+            // Fetch the person identification type
+            $personIdentificationType = PersonIdentificationType::findOrFail($id);
+            return response()->json($personIdentificationType);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json([
+                'message' => 'Error fetching person identification type',
+                'error' => $th->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -69,32 +87,50 @@ class PersonIdentificationTypeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, PersonIdentificationType $personIdentificationType)
+    public function update(Request $request, string $id)
     {
-        //
+        try {
+            // Fetch the person identification type
+            $personIdentificationType = PersonIdentificationType::findOrFail($id);
 
-        // Validate the request data
-        $validatedData = $request->validate([
-            'identification_type' => 'required',
-            'identification_number' => 'required',
-        ]);
+            // Validate the request data
+            $validatedData = $request->validate([
+                'identification_type' => 'required',
+                'identification_number' => 'required',
+            ]);
 
-        // Update the person identification type
-        $personIdentificationType->update($validatedData);
+            // Update the person identification type
+            $personIdentificationType->update($validatedData);
 
-        return response()->json($personIdentificationType);
+            return response()->json($personIdentificationType);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json([
+                'message' => 'Error updating person identification type',
+                'error' => $th->getMessage()
+            ], 500);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(PersonIdentificationType $personIdentificationType)
+    public function destroy(string $id)
     {
-        //
+        try {
+            // Fetch the person identification type
+            $personIdentificationType = PersonIdentificationType::findOrFail($id);
 
-        // Delete the person identification type
-        $personIdentificationType->delete();
+            // Delete the person identification type
+            $personIdentificationType->delete();
 
-        return response()->json(null, 204);
+            return response()->json(['message' => 'Person Identification TypeSS deleted successfully'], 200);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json([
+                'message' => 'Error deleting person identification type',
+                'error' => $th->getMessage()
+            ], 500);
+        }
     }
 }

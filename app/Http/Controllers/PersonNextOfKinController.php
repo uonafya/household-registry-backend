@@ -12,10 +12,17 @@ class PersonNextOfKinController extends Controller
      */
     public function index()
     {
-        // retrieves all the PersonNextOfKin records and returns a view to display them
-
-        $nextOfKin = PersonNextOfKin::all();
-        return response()->json($nextOfKin);
+        try {
+            // Fetch all person next of kins
+            $personNextOfKins = PersonNextOfKin::all();
+            return response()->json($personNextOfKins);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json([
+                'message' => 'Error fetching person next of kins',
+                'error' => $th->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -33,19 +40,26 @@ class PersonNextOfKinController extends Controller
      */
     public function store(Request $request)
     {
-        //  creation of a new PersonNextOfKin record based on the form submission
+        try {
+            // Validate the request data
+            $validatedData = $request->validate([
+                'name' => 'required',
+                'relationship' => 'required',
+                'residence_id' => 'required',
+                'contact_id' => 'required',
+            ]);
 
-        $data = $request->validate([
-            'name' => 'required',
-            'relationship' => 'required',
-            'residence' => 'required',
-            'contact_id' => 'required',
-        ]);
+            // Create a person next of kin
+            $personNextOfKin = PersonNextOfKin::create($validatedData);
 
-        PersonNextOfKin::create($data);
-
-        return redirect()->route('person-next-of-kin.index')
-            ->with('success', 'Next of kin created successfully.');
+            return response()->json($personNextOfKin);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json([
+                'message' => 'Error creating person next of kin',
+                'error' => $th->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -53,13 +67,17 @@ class PersonNextOfKinController extends Controller
      */
     public function show($id)
     {
-        // retrieves and displays a specific PersonNextOfKin record
-
-
-        // Fetch single personnextofkin by id
-        
-        $personNextOfKin = PersonNextOfKin::findOrFail($id);
-        return response()->json($personNextOfKin); 
+        try {
+            // Fetch the person next of kin
+            $personNextOfKin = PersonNextOfKin::findOrFail($id);
+            return response()->json($personNextOfKin);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json([
+                'message' => 'Error fetching person next of kin',
+                'error' => $th->getMessage()
+            ], 500);
+        } 
     }
 
     /**
@@ -75,28 +93,55 @@ class PersonNextOfKinController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, PersonNextOfKin $personNextOfKin)
+    public function update(Request $request, $id)
     {
-        //  handles the updating of an existing PersonNextOfKin record based on the form submission.
+        try {
+            // Validate the request data
+            $validatedData = $request->validate([
+                'name' => 'required',
+                'relationship' => 'required',
+                'residence_id' => 'required',
+                'contact_id' => 'required',
+            ]);
 
-        $data = $request->validate([
-            'name' => 'required',
-            'relationship' => 'required',
-            'residence' => 'required',
-            'contact_id' => 'required',
-        ]);
+            // Update the person next of kin
+            $personNextOfKin = PersonNextOfKin::findOrFail($id);
+            $personNextOfKin->update($validatedData);
 
-        $personNextOfKin->update($data);
-
-        return redirect()->route('person-next-of-kin.index')
-            ->with('success', 'Next of kin updated successfully.');
+            return response()->json([
+                'data' => $personNextOfKin,
+                'message' => 'Person next of kin updated successfully'
+            ]);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json([
+                'message' => 'Error updating person next of kin',
+                'error' => $th->getMessage()
+            ], 500);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(PersonNextOfKin $personNextOfKin)
+    public function destroy(string $id)
     {
-        //  deletion of a specific PersonNextOfKin record.
+        try {
+            // Fetch the person next of kin
+            $personNextOfKin = PersonNextOfKin::findOrFail($id);
+
+            // Delete the person next of kin
+            $personNextOfKin->delete();
+
+            return response()->json([
+                'message' => 'Person next of kin deleted successfully'
+            ]);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json([
+                'message' => 'Error deleting person next of kin',
+                'error' => $th->getMessage()
+            ], 500);
+        }
     }
 }

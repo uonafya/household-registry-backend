@@ -11,7 +11,7 @@ class Residence extends Model
 
     protected $fillable = [
         'county',
-        'subCounty',
+        'sub_county',
         'ward',
         'village',
     ];

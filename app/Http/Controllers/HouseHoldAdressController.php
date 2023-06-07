@@ -8,11 +8,18 @@ use Illuminate\Http\Request;
 class HouseHoldAdressController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * GET request - Get a listing of all the household addresses.
      */
     public function index()
     {
-        return HouseHoldAdress::all();
+        try {
+            $householdadress = HouseHoldAdress::all();
+            // If the household addresses are found, return them as a json response
+            return response()->json($householdadress);
+        } catch (\Exception $e) {
+            // If the household addresses are not found, return an error response
+            return response()->json(['message' => 'Failed to fetch household addresses'], 500);
+        }
     }
 
     /**
@@ -20,15 +27,13 @@ class HouseHoldAdressController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'householdTypeId' => 'required',
-            'areaTypeId' => 'required',
-            'areaName' => 'required',
-            'areaCode' => 'required',
-            'parentAreaId' => 'required'
-        ]);
-
-        return HouseHoldAdress::create($request->all());
+        try {
+            // POST request...create a household address
+            $householdadress = HouseHoldAdress::create($request->all());
+            return response()->json($householdadress, 201);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to create household address'], 500);
+        }
     }
 
     /**
@@ -36,8 +41,18 @@ class HouseHoldAdressController extends Controller
      */
     public function show( string $id)
     {
-        $householdadress = HouseHoldAdress::findOrFail($id);
-        return response()->json($householdadress);
+        try {
+            // Fetch single household address by id---GET
+            $householdadress = HouseHoldAdress::findOrFail($id);
+            // If the household address is found, return it as a json response
+            return response()->json([
+                'data' => $householdadress,
+                'message' => 'Household address retrieved successfully'
+            ], 200);
+        } catch (\Exception $e) {
+            // If the household address is not found, return an error response
+            return response()->json(['message' => 'Household address not found'], 404);
+        }
     }
 
     /**
@@ -45,9 +60,14 @@ class HouseHoldAdressController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $householdadress = HouseHoldAdress::find($id);
-        $householdadress->update($request->all());
-        return $householdadress;
+        try {
+            // PUT request...update a household address
+            $householdadress = HouseHoldAdress::findOrFail($id);
+            $householdadress->update($request->all());
+            return response()->json($householdadress, 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to update household address'], 500);
+        }
     }
 
     /**
@@ -55,14 +75,27 @@ class HouseHoldAdressController extends Controller
      */
     public function destroy(string $id)
     {
-        return HouseHoldAdress::destroy($id);
+        try {
+            // DELETE request...delete a household address
+            $householdadress = HouseHoldAdress::findOrFail($id);
+            $householdadress->delete();
+            return response()->json(['message' => 'Household address deleted successfully'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to delete household address'], 500);
+        }
     }
 
     /**
      * Search the specified address from storage.
      */
-    public function search(string $householdTypeId)
+    public function search(string $household_type_id)
     {
-        return HouseHoldAdress::where('householdTypeId', 'like', '%'.$householdTypeId.'%')->get();
+        try {
+            // GET request...search a household address
+            $householdadress = HouseHoldAdress::where('household_type_id','like', '%' . $household_type_id . '%')->get();
+            return response()->json($householdadress, 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to search household address'], 500);
+        }
     }
 }
