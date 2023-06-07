@@ -31,5 +31,5 @@ class HouseHold extends Model
     {
         return $this->hasMany(HouseHoldPersonDetails::class, 'household_id');
     }
-  
+
 }

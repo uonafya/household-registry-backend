@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\HouseHoldAdress;
+use App\Models\HouseHoldAddress;
 use Illuminate\Http\Request;
 
-class HouseHoldAdressController extends Controller
+class HouseHoldAddressController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return HouseHoldAdress::all();
+        return HouseHoldAddress::all();
     }
 
     /**
@@ -28,7 +28,7 @@ class HouseHoldAdressController extends Controller
             'parentAreaId' => 'required'
         ]);
 
-        return HouseHoldAdress::create($request->all());
+        return HouseHoldAddress::create($request->all());
     }
 
     /**
@@ -36,7 +36,7 @@ class HouseHoldAdressController extends Controller
      */
     public function show(string $id)
     {
-        return HouseHoldAdress::find($id);
+        return HouseHoldAddress::find($id);
     }
 
     /**
@@ -44,9 +44,9 @@ class HouseHoldAdressController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $householdadress = HouseHoldAdress::find($id);
-        $householdadress->update($request->all());
-        return $householdadress;
+        $HouseHoldAddress = HouseHoldAddress::find($id);
+        $HouseHoldAddress->update($request->all());
+        return $HouseHoldAddress;
     }
 
     /**
@@ -54,7 +54,7 @@ class HouseHoldAdressController extends Controller
      */
     public function destroy(string $id)
     {
-        return HouseHoldAdress::destroy($id);
+        return HouseHoldAddress::destroy($id);
     }
 
     /**
@@ -62,6 +62,6 @@ class HouseHoldAdressController extends Controller
      */
     public function search(string $householdTypeId)
     {
-        return HouseHoldAdress::where('householdTypeId', 'like', '%'.$householdTypeId.'%')->get();
+        return HouseHoldAddress::where('householdTypeId', 'like', '%'.$householdTypeId.'%')->get();
     }
 }
