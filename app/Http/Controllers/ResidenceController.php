@@ -70,6 +70,7 @@ class ResidenceController extends Controller
     {
         // PUT/ PATCH...update a residence
         try {
+            // 
             $residence = Residence::findOrFail($id);
             $residence->update($request->all());
             return response()->json($residence);
@@ -92,7 +93,6 @@ class ResidenceController extends Controller
             return response()->json(['message' => 'Failed to delete residence'], 500);
         }
     }
-
 
 }
 

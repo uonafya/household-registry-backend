@@ -28,8 +28,13 @@ class HouseHoldAdressController extends Controller
     public function store(Request $request)
     {
         try {
+            // Validate the request data
+            $validatedData = $request->validate([
+                'household_type_id' => 'required',
+                'address_id' => 'required',
+            ]);
             // POST request...create a household address
-            $householdadress = HouseHoldAdress::create($request->all());
+            $householdadress = HouseHoldAdress::create($validatedData);
             return response()->json($householdadress, 201);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Failed to create household address'], 500);
@@ -61,7 +66,7 @@ class HouseHoldAdressController extends Controller
     public function update(Request $request, string $id)
     {
         try {
-            // PUT request...update a household address
+            // PUT/PATCH request...update a household address
             $householdadress = HouseHoldAdress::findOrFail($id);
             $householdadress->update($request->all());
             return response()->json($householdadress, 200);
