@@ -15,9 +15,4 @@ class Residence extends Model
         'ward',
         'village',
     ];
-
-    public function houseHoldPersonDetails()
-    {
-        return $this->hasMany(HouseHoldPersonDetails::class, 'residence_id');
-    }
 }

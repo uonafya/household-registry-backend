@@ -17,19 +17,20 @@ class HouseHold extends Model
         'household_address_id',
     ];
 
+
     public function householdType()
     {
-        return $this->belongsTo(HouseHoldType::class, 'household_type_id');
+        return $this->belongsTo(HouseHoldType::class);
     }
 
     public function householdAddress()
     {
-        return $this->belongsTo(HouseHoldAddress::class, 'household_address_id');
+        return $this->belongsTo(HouseHoldAdress::class);
     }
 
-    public function houseHoldPersonDetails()
+    public function householdPersonDetails()
     {
-        return $this->hasMany(HouseHoldPersonDetails::class, 'household_id');
+        return $this->hasMany(HouseHoldPersonDetails::class);
     }
   
 }

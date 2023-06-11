@@ -16,19 +16,9 @@ class PersonNextOfKin extends Model
         'contact_id',
     ];
 
-    public function houseHoldPersonDetails()
+    public function personContact()
     {
-        return $this->hasOne(HouseHoldPersonDetails::class, 'next_of_kin_id');
-    }
-
-    public function residence()
-    {
-        return $this->belongsTo(Residence::class, 'residence_id');
-    }
-
-    public function personContacts()
-    {
-        return $this->belongsTo(PersonContacts::class, 'contact_id');
+        return $this->belongsTo(PersonContacts::class);
     }
 
 

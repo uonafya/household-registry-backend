@@ -15,9 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('relationship');
-            $table->string('residence_id');
-            $table->string('contact_id');
+            $table->string('residence');
+            $table->unsignedBigInteger('contact_id');
             $table->timestamps();
+
+            // Define foreign key constraints
+            $table->foreign('contact_id')->references('id')->on('person_contacts')->onDelete('cascade');
         });
     }
 

@@ -13,20 +13,26 @@ return new class extends Migration
     {
         Schema::create('house_hold_person_details', function (Blueprint $table) {
             $table->id();
-            $table->string('first_name');
-            $table->string('middle_name')->nullable();
-            $table->string('last_name');
-            $table->date('date_of_birth');
+            $table->string('firstName');
+            $table->string('middleName')->nullable();
+            $table->string('lastName');
+            $table->date('dateOfBirth');
             $table->string('gender');
             $table->string('country');
-            $table->string('county_of_birth');
+            $table->string('countyOfBirth');
+            $table->unsignedBigInteger('residence_id');
+            $table->unsignedBigInteger('person_contact_id');
+            $table->unsignedBigInteger('person_next_of_kin_id');
+            $table->unsignedBigInteger('person_identifications_id');
             $table->boolean('is_alive');
-            $table->string('residence_id');
-            $table->string('contact_id');
-            $table->string('next_of_kin_id');
-            $table->string('identification_id');
-            $table->string('household_id');
+            $table->unsignedBigInteger('household_id');
             $table->timestamps();
+
+            $table->foreign('residence_id')->references('id')->on('residences');
+            $table->foreign('person_contact_id')->references('id')->on('person_contacts');
+            $table->foreign('person_next_of_kin_id')->references('id')->on('person_next_of_kin');
+            $table->foreign('person_identifications_id')->references('id')->on('person_identification_types');
+            $table->foreign('household_id')->references('id')->on('house_holds');
         });
     }
 
