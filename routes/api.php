@@ -1,9 +1,21 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HouseHoldController;
 use App\Http\Controllers\HouseHoldAdressController;
+use App\Http\Controllers\HouseHoldMembershipController;
+use App\Http\Controllers\HouseholdMemberTypeController;
+use App\Http\Controllers\ResidenceController;
+use App\Http\Controllers\AdministrativeHierachyController;
+use App\Http\Controllers\PersonContactsController;
+use App\Http\Controllers\PersonIdentificationTypeController;
+use App\Http\Controllers\PersonNextOfKinController;
+use App\Http\Controllers\UserController;
+
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -15,6 +27,14 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
+// Register endpoint
+Route::post('register', [AuthController::class, 'register']);
+
+// Login
+Route::post('login', [AuthController::class, 'login']);
+
+
 
 //HouseHold API endpoints
 Route::resource('household', HouseHoldController::class);
@@ -32,8 +52,30 @@ Route::get('/householdmembership/search/{household_person_details_id}', [HouseHo
 Route::resource('householdmembertype', HouseholdMemberTypeController::class);
 Route::get('/householdmembertype/search/{household_membership_name}', [HouseholdMemberTypeController::class, 'search']);
 
+// AdministrativeHierachy model CRUD endpoints
+Route::resource('administrativehierachy', AdministrativeHierachyController::class);
+
+// PersonContacts model CRUD endpoints
+Route::resource('personcontacts', PersonContactsController::class);
 
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// PersonIdentificationType model CRUD endpoints
+Route::resource('personidentificationtype', PersonIdentificationTypeController::class);
+
+
+// PersonNextOfKin model CRUD endpoints
+Route::resource('personnextofkin', PersonNextOfKinController::class);
+
+//Residence model CRUD endpoints
+Route::resource('residences', ResidenceController::class);
+
+// Personnext model CRUD endpoints
+Route::resource('user', UserController::class);
+
+
+
+
+Route::group(['middleware'=>['auth:sanctum']], function () {
+    // Logout
+    Route::post('logout', [AuthController::class, 'logout']);
 });

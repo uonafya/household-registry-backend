@@ -13,10 +13,15 @@ return new class extends Migration
     {
         Schema::create('house_hold_memberships', function (Blueprint $table) {
             $table->id();
-            $table->string('household_person_details_id');
-            $table->string('household_member_type_id');
-            $table->string('household_id');
+            $table->unsignedBigInteger('household_person_details_id');
+            $table->unsignedBigInteger('household_member_type_id');
+            $table->unsignedBigInteger('household_id');
             $table->timestamps();
+
+            // Define foreign key constraints
+            $table->foreign('household_person_details_id')->references('id')->on('house_hold_person_details')->onDelete('cascade');
+            $table->foreign('household_member_type_id')->references('id')->on('household_member_types')->onDelete('cascade');
+            $table->foreign('household_id')->references('id')->on('house_holds')->onDelete('cascade');
         });
     }
 

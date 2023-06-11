@@ -17,19 +17,18 @@ class HouseHoldMembership extends Model
 
     public function householdPersonDetails()
     {
-        return $this->belongsTo(HouseHoldPersonDetails::class, 'household_person_details_id');
+        return $this->belongsTo(HouseHoldPersonDetails::class);
     }
 
 
     public function householdMemberType()
     {
-        return $this->belongsTo(HouseholdMemberType::class, 'household_member_type_id');
+        return $this->belongsTo(HouseholdMemberType::class);
     }
-
 
     public function household()
     {
-        return $this->belongsTo(Household::class, 'household_id');
+        return $this->belongsTo(HouseHold::class);
     }
 
 }

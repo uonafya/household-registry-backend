@@ -11,13 +11,8 @@ class Residence extends Model
 
     protected $fillable = [
         'county',
-        'subCounty',
+        'sub_county',
         'ward',
         'village',
     ];
-
-    public function houseHoldPersonDetails()
-    {
-        return $this->hasMany(HouseHoldPersonDetails::class, 'residence_id');
-    }
 }

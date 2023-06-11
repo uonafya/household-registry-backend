@@ -14,14 +14,4 @@ class PersonContacts extends Model
         'secondary_phone',
         'email',
     ];
-
-    public function houseHoldPersonDetails()
-    {
-        return $this->hasOne(HouseHoldPersonDetails::class, 'contact_id');
-    }
-
-    public function personNextOfKin()
-    {
-        return $this->hasOne(PersonNextOfKin::class, 'contact_id');
-    }
 }
