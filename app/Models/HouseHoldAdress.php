@@ -9,6 +9,9 @@ class HouseHoldAdress extends Model
 {
     use HasFactory;
 
+    //table name
+    protected $table = 'house_hold_addresses';
+
     protected $fillable = [
         'household_type_id',
         'area_type_id',

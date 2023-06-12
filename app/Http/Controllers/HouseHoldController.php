@@ -3,100 +3,110 @@
 namespace App\Http\Controllers;
 
 use App\Models\HouseHold;
+use App\Models\HouseHoldType;
+use App\Models\HouseHoldAddress;
+use App\Models\HouseHoldAdress;
 use Illuminate\Http\Request;
 
 class HouseHoldController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        try {
-            // GET request - Get a listing of all the household.
-            $household = HouseHold::all();
-            // If the household are found, return them as a json response
-            return response()->json($household);
-        } catch (\Exception $e) {
-            // If the household are not found, return an error response
-            return response()->json(['message' => 'Failed to fetch household'], 500);
-        }
+        $households = HouseHold::with('householdType', 'householdAddress')->get();
+        return response()->json($households);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        try {
-            // POST request...create a household
-            $household = HouseHold::create($request->all());
-            return response()->json($household, 201);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Failed to create household'], 500);
-        }
-    }
-
-    /**
-     * Display the specified resource.
-     */
     public function show($id)
     {
-        try {
-            // Fetch single household by id---GET
-            $household = HouseHold::findOrFail($id);
-            // If the household is found, return it as a json response
-            return response()->json([
-                'data' => $household,
-                'message' => 'Household retrieved successfully'
-            ], 200);
-        } catch (\Exception $e) {
-            // If the household is not found, return an error response
-            return response()->json(['message' => 'Household not found'], 404);
-        }
+        $household = HouseHold::with('householdType', 'householdAddress')->findOrFail($id);
+        return response()->json($household);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function store(Request $request)
+{
+    // Validate the request data
+    $request->validate([
+        'household_name' => 'required|string',
+        'household_identifier' => 'required|string',
+        'household_type' => 'required|array',
+        'household_type.household_type_name' => 'required|string',
+        'household_address' => 'required|array',
+        'household_address.area_type_id' => 'required|numeric',
+        'household_address.area_name' => 'required|string',
+        'household_address.area_code' => 'required|string',
+        'household_address.parent_area_id' => 'nullable',
+    ]);
+
+    // Create the household type
+    $householdType = HouseHoldType::create([
+        'household_type_name' => $request->input('household_type.household_type_name'),
+    ]);
+
+    // Create the household address
+    $householdAddress = HouseHoldAdress::create([
+        'household_type_id' => $householdType->id,
+        'area_type_id' => $request->input('household_address.area_type_id'),
+        'area_name' => $request->input('household_address.area_name'),
+        'area_code' => $request->input('household_address.area_code'),
+        'parent_area_id' => $request->input('household_address.parent_area_id'),
+    ]);
+
+    // Create the household
+    $household = HouseHold::create([
+        'household_name' => $request->input('household_name'),
+        'household_identifier' => $request->input('household_identifier'),
+        'household_type_id' => $householdType->id,
+        'household_address_id' => $householdAddress->id,
+    ]);
+
+    return response()->json($household, 201);
+}
+
+    public function update(Request $request, $id)
     {
-        try {
-            // PUT/PATCH request...update a household
-            $household = HouseHold::findOrFail($id);
-            $household->update($request->all());
-            return response()->json($household, 200);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Failed to update household'], 500);
-        }
+        $household = HouseHold::findOrFail($id);
+
+        $request->validate([
+            'household_name' => 'required|string',
+            'household_identifier' => 'required|string',
+            'household_type_id' => 'required|exists:house_hold_types,id',
+            'household_address_id' => 'required|exists:house_hold_addresses,id',
+        ]);
+
+        // Update the household type
+        $householdType = HouseHoldType::findOrFail($household->household_type_id);
+        $householdType->update([
+            'household_type_name' => $request->input('household_type_name'),
+        ]);
+
+        // Update the household address
+        $householdAddress = HouseHoldAdress::findOrFail($household->household_address_id);
+        $householdAddress->update([
+            'household_type_id' => $request->input('household_type_id'),
+            'area_type_id' => $request->input('area_type_id'),
+            'area_name' => $request->input('area_name'),
+            'area_code' => $request->input('area_code'),
+            'parent_area_id' => $request->input('parent_area_id'),
+        ]);
+
+        // Update the household
+        $household->update([
+            'household_name' => $request->input('household_name'),
+            'household_identifier' => $request->input('household_identifier'),
+            'household_type_id' => $householdType->id,
+            'household_address_id' => $householdAddress->id,
+        ]);
+
+        return response()->json($household);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        try {
-            // DELETE request...delete a household
-            $household = HouseHold::findOrFail($id);
-            $household->delete();
-            return response()->json(['message' => 'Household deleted successfully'], 200);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Failed to delete household'], 500);
-        }
-    }
+        $household = HouseHold::findOrFail($id);
+        $household->delete();
 
-    /**
-     * Search for the specified household from storage.
-     */
-    public function search(string $household_name)
-    {
-        try {
-            // GET request...search for a household
-            $household = HouseHold::where('household_name', 'like', '%' . $household_name . '%')->get();
-            return response()->json($household, 200);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Failed to search for household'], 500);
-        }
+        return response()->json(['message' => 'Household deleted successfully']);
     }
 }
+
+
