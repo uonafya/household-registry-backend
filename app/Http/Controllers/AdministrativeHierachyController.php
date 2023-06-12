@@ -7,87 +7,48 @@ use Illuminate\Http\Request;
 
 class AdministrativeHierachyController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
-        //
-        $administrativeHierarchies = AdministrativeHierachy::all();
-        return response()->json($administrativeHierarchies);
+        $administrativeHierachies = AdministrativeHierachy::all();
+        return response()->json($administrativeHierachies);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-        return view('administrative-hierarchies.create');
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
-        $validatedData = $request->validate([
-            'hierarchy_name' => 'required',
-            'code' => 'required',
-            // Add validation rules for other fields
+        $data = $request->validate([
+            'hierarchy_name' => 'required|string',
+            'code' => 'required|string',
+            'facility' => 'required|string',
+            'status' => 'required|string',
+            'house_holds' => 'required|string',
+            'date_established' => 'required|date',
+            'location' => 'required|string',
+            'isClosed' => 'required|boolean',
+            'isRejected' => 'required|boolean',
+            'number_of_chvs' => 'required|string',
         ]);
 
-        $administrativeHierarchy = AdministrativeHierachy::create($validatedData);
+        $hierarchy = AdministrativeHierachy::create($data);
 
-        return redirect()->route('administrative-hierarchies.show', $administrativeHierarchy->id)
-            ->with('success', 'Administrative hierarchy created successfully.');
+        return response()->json($hierarchy);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show($id)
+    public function show(AdministrativeHierachy $administrativeHierachy)
     {
-        //
-        $administrativehierarchy = AdministrativeHierachy::findOrFail($id);
-        return $administrativehierarchy;
+        return response()->json($administrativeHierachy);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
+    public function update(Request $request, AdministrativeHierachy $administrativeHierachy)
     {
-        //
-        $administrativeHierarchy = AdministrativeHierachy::findOrFail($id);
-        return view('administrative-hierarchies.edit', compact('administrativeHierarchy'));
+        $administrativeHierachy->update($request->all());
+        return response()->json($administrativeHierachy);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, $id)
-    {
-        //
-        $validatedData = $request->validate([
-            'hierarchy_name' => 'required',
-            'code' => 'required',
-            // Add validation rules for other fields
-        ]);
-
-        $administrativeHierarchy = AdministrativeHierachy::findOrFail($id);
-        $administrativeHierarchy->update($validatedData);
-
-        return redirect()->route('administrative-hierarchies.show', $administrativeHierarchy->id)
-            ->with('success', 'Administrative hierarchy updated successfully.');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(AdministrativeHierachy $administrativeHierachy)
     {
-        //
+        $administrativeHierachy->delete();
+        return response()->json(null, 204);
     }
 }
