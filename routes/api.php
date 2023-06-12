@@ -53,7 +53,12 @@ Route::resource('householdmembertype', HouseholdMemberTypeController::class);
 Route::get('/householdmembertype/search/{household_membership_name}', [HouseholdMemberTypeController::class, 'search']);
 
 // AdministrativeHierachy model CRUD endpoints
-Route::resource('administrativehierachy', AdministrativeHierachyController::class);
+Route::post('administrativehierachy', [AdministrativeHierachyController::class, 'store']);
+Route::get('administrativehierachy', [AdministrativeHierachyController::class, 'index']);
+Route::get('administrativehierachy/{administrativeHierachy}', [AdministrativeHierachyController::class, 'show']);
+Route::put('administrativehierachy/{administrativeHierachy}', [AdministrativeHierachyController::class, 'update']);
+Route::patch('administrativehierachy/{administrativeHierachy}', [AdministrativeHierachyController::class, 'update']);
+Route::delete('administrativehierachy/{administrativeHierachy}', [AdministrativeHierachyController::class, 'destroy']);
 
 // PersonContacts model CRUD endpoints
 Route::resource('personcontacts', PersonContactsController::class);
@@ -67,7 +72,13 @@ Route::resource('personidentificationtype', PersonIdentificationTypeController::
 Route::resource('personnextofkin', PersonNextOfKinController::class);
 
 //Residence model CRUD endpoints
-Route::resource('residences', ResidenceController::class);
+// Create
+Route::post('residence', [ResidenceController::class, 'store']);
+Route::get('residence', [ResidenceController::class, 'index']);
+Route::get('residence/{id}', [ResidenceController::class, 'show']);
+Route::put('residence/{id}', [ResidenceController::class, 'update']);
+Route::patch('residence/{id}', [ResidenceController::class, 'update']);
+Route::delete('residence/{id}', [ResidenceController::class, 'destroy']);
 
 // Personnext model CRUD endpoints
 Route::resource('user', UserController::class);
