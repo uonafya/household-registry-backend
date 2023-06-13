@@ -12,7 +12,7 @@ class PersonNextOfKin extends Model
     protected $fillable = [
         'name',
         'relationship',
-        'residence_id',
+        'residence',
         'contact_id',
     ];
 
@@ -20,6 +20,5 @@ class PersonNextOfKin extends Model
     {
         return $this->belongsTo(PersonContacts::class);
     }
-
 
 }

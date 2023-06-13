@@ -10,18 +10,18 @@ class HouseHoldPersonDetails extends Model
     use HasFactory;
 
     protected $fillable = [
-        'first_name',
-        'middle_name',
-        'last_name',
-        'date_of_birth',
+        'firstName',
+        'middleName',
+        'lastName',
+        'dateOfBirth',
         'gender',
         'country',
-        'county_of_birth',
+        'countyOfBirth',
         'is_alive',
         'residence_id',
-        'contact_id',
-        'next_of_kin_id',
-        'identification_id',
+        'person_contact_id',
+        'person_next_of_kin_id',
+        'person_identifications_id',
         'household_id',
     ];
 
@@ -47,6 +47,6 @@ class HouseHoldPersonDetails extends Model
 
     public function household()
     {
-        return $this->belongsTo(Household::class);
+        return $this->belongsTo(Household::class, 'household_id');
     }
 }
