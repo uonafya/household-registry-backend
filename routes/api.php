@@ -37,12 +37,10 @@ Route::post('login', [AuthController::class, 'login']);
 
 
 //HouseHold API endpoints
-Route::get('/households', [HouseHoldController::class, 'index']);
-Route::get('/households/{id}', [HouseHoldController::class, 'show']);
-Route::post('/households', [HouseHoldController::class, 'store']);
-Route::put('/households/{id}', [HouseHoldController::class, 'update']);
-Route::delete('/households/{id}', [HouseHoldController::class, 'destroy']);
 Route::post('/households', [HouseHoldController::class, 'saveHouseHoldAndAtleastOnePerson']);
+Route::get('/households/{householdId}/members', [HouseHoldController::class, 'getHouseholdMembers']);
+Route::get('/households', [HouseHoldController::class, 'getAllHouseholds']);
+Route::get('/households/approved/{isApproved}', [HouseHoldController::class, 'getApprovedHouseholds']);
 
 
 //HouseHoldAdress API endpoints

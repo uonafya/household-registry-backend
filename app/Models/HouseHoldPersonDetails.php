@@ -22,7 +22,7 @@ class HouseHoldPersonDetails extends Model
         'person_contact_id',
         'person_next_of_kin_id',
         'person_identifications_id',
-        'household_id',
+        'house_hold_id',
     ];
 
     public function residence()
@@ -47,6 +47,6 @@ class HouseHoldPersonDetails extends Model
 
     public function household()
     {
-        return $this->belongsTo(Household::class, 'household_id');
+        return $this->belongsTo(Household::class, 'house_hold_id');
     }
 }
