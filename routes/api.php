@@ -43,6 +43,7 @@ Route::post('/households', [HouseHoldController::class, 'store']);
 Route::put('/households/{id}', [HouseHoldController::class, 'update']);
 Route::delete('/households/{id}', [HouseHoldController::class, 'destroy']);
 Route::post('/households', [HouseHoldController::class, 'saveHouseHoldAndAtleastOnePerson']);
+Route::get('/households/{householdId}/members', [HouseHoldController::class, 'getHouseholdMembers']);
 
 
 //HouseHoldAdress API endpoints

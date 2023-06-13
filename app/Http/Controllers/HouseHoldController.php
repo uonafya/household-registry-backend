@@ -125,7 +125,7 @@ class HouseHoldController extends Controller
                     'person_next_of_kin_id' => $nextOfKin->id,
                     'person_identifications_id' => $identification->id,
                     'is_alive' => $memberData['is_alive'],
-                    'household_id' => $household->id,
+                    'house_hold_id' => $household->id,
                 ]);
 
                 $household->household_persons()->save($member);
@@ -133,5 +133,15 @@ class HouseHoldController extends Controller
         }
 
         return response()->json($household, 201);
+    }
+
+    public function getHouseholdMembers($householdId)
+    {
+        $household = HouseHold::findOrFail($householdId);
+
+        // Retrieve all the members of the household
+        $members = $household->household_persons;
+
+        return response()->json($members, 200);
     }
 }
