@@ -32,5 +32,9 @@ class HouseHold extends Model
     {
         return $this->hasMany(HouseHoldPersonDetails::class);
     }
-  
+
+    public function household_persons()
+    {
+        return $this->hasMany(HouseHoldPersonDetails::class);
+    }
 }
