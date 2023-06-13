@@ -132,7 +132,10 @@ class HouseHoldController extends Controller
             }
         }
 
-        return response()->json($household, 201);
+        return response()->json([
+            'message' => 'Successfully created household!',
+            'household' => $household,
+        ], 201);
     }
 
     public function getHouseholdMembers($householdId)
@@ -142,6 +145,32 @@ class HouseHoldController extends Controller
         // Retrieve all the members of the household
         $members = $household->household_persons;
 
-        return response()->json($members, 200);
+        return response()->json([
+           'success' => true,
+            'members' => $members,
+        ], 200);
     }
+
+
+    public function getAllHouseholds()
+    {
+        $households = HouseHold::all();
+
+        return response()->json([
+            'success' => true,
+            'households' => $households,
+        ], 200);
+    }
+
+    public function getApprovedHouseholds($isApproved)
+    {
+        $approvedHouseholds = HouseHold::where('is_household_approved', $isApproved)->get();
+
+        return response()->json([
+            'success' => true,
+            'approved_households' => $approvedHouseholds,
+        ], 200);
+    }
+
+
 }
