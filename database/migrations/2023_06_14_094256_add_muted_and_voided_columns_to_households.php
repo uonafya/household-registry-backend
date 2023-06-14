@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('house_holds', function (Blueprint $table) {
-            //
-            
+            $table->boolean('is_muted')->default(false);
+            $table->boolean('is_voided')->default(false);
         });
     }
 
@@ -23,7 +23,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('house_holds', function (Blueprint $table) {
-            //
+            $table->dropColumn('is_muted');
+            $table->dropColumn('is_voided');
         });
     }
 };

@@ -7,6 +7,8 @@ use App\Http\Controllers\HouseHoldMembershipController;
 use App\Http\Controllers\HouseholdMemberTypeController;
 use App\Http\Controllers\ResidenceController;
 use App\Http\Controllers\AdministrativeHierachyController;
+use App\Http\Controllers\HouseHoldMuting;
+use App\Http\Controllers\HouseHoldMutingController;
 use App\Http\Controllers\PersonContactsController;
 use App\Http\Controllers\PersonIdentificationTypeController;
 use App\Http\Controllers\PersonNextOfKinController;
@@ -34,8 +36,6 @@ Route::post('register', [AuthController::class, 'register']);
 // Login
 Route::post('login', [AuthController::class, 'login']);
 
-
-
 //HouseHold API endpoints
 Route::post('/households', [HouseHoldController::class, 'saveHouseHoldAndAtleastOnePerson']);
 Route::get('/households/{householdId}/members', [HouseHoldController::class, 'getHouseholdMembers']);
@@ -44,6 +44,11 @@ Route::get('/households/approved/{isApproved}', [HouseHoldController::class, 'ge
 Route::post('/households/migration', [HouseHoldController::class, 'handleHouseHoldMigration']);
 Route::get('/households/migration', [HouseHoldController::class, 'getAllMigratedHouseholds']);
 Route::get('/households/migration/pending', [HouseHoldController::class, 'getAllPendingMigratedHouseholds']);
+
+//muting a household
+Route::post('/households/mute', [HouseHoldMutingController::class, 'searchAndMuteAHouseHold']);
+Route::get('/households/mute', [HouseHoldMutingController::class, 'getAllMutedHouseHolds']);
+Route::post('/households/mute/approve', [HouseHoldMutingController::class, 'approveHouseHoldMuting']);
 
 
 //HouseHoldAdress API endpoints
