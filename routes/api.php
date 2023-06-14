@@ -42,6 +42,8 @@ Route::get('/households/{householdId}/members', [HouseHoldController::class, 'ge
 Route::get('/households', [HouseHoldController::class, 'getAllHouseholds']);
 Route::get('/households/approved/{isApproved}', [HouseHoldController::class, 'getApprovedHouseholds']);
 Route::post('/households/migration', [HouseHoldController::class, 'handleHouseHoldMigration']);
+Route::get('/households/migration', [HouseHoldController::class, 'getAllMigratedHouseholds']);
+Route::get('/households/migration/pending', [HouseHoldController::class, 'getAllPendingMigratedHouseholds']);
 
 
 //HouseHoldAdress API endpoints
