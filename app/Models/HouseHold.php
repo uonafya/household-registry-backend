@@ -15,6 +15,7 @@ class HouseHold extends Model
         'household_identifier',
         'household_type_id',
         'household_address_id',
+        'household_registered_by_id'
     ];
 
 

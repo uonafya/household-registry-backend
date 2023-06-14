@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('house_holds', function (Blueprint $table) {
-            //
-            
+        Schema::table('household_voiding', function (Blueprint $table) {
+            $table->renameColumn('voiding_appproved_by_id', 'voiding_approved_by_id');
         });
     }
 
@@ -22,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('house_holds', function (Blueprint $table) {
+        Schema::table('household_voiding', function (Blueprint $table) {
             //
         });
     }

@@ -18,9 +18,7 @@ class HouseHoldMigration extends Model
         'to_location_id',
         'reason_for_migration',
         'initiated_by_chv_id',
-        'approved_by_cha_id',
         'date_of_migration',
-        'is_approved',
     ];
 
     public function fromLocation()
