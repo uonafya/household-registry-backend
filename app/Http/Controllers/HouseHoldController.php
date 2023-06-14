@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\HouseHold;
+use App\Models\HouseHoldMigration;
 use App\Models\HouseHoldType;
 use App\Models\HouseHoldAdress;
 use App\Models\HouseHoldPersonDetails;
@@ -10,11 +11,13 @@ use App\Models\PersonContacts;
 use App\Models\PersonIdentificationType;
 use App\Models\PersonNextOfKin;
 use App\Models\Residence;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class HouseHoldController extends Controller
 {
- 
+
 
     public function saveHouseHoldAndAtleastOnePerson(Request $request)
     {
@@ -77,8 +80,8 @@ class HouseHoldController extends Controller
         ]);
 
 
-         // Check if there are any members provided
-         if ($request->has('household_persons')) {
+        // Check if there are any members provided
+        if ($request->has('household_persons')) {
             // Create the members and associate them with the household
             foreach ($request->input('household_persons') as $memberData) {
                 $residence = Residence::create([
@@ -95,7 +98,7 @@ class HouseHoldController extends Controller
                 ]);
 
                 //save next of kin contact
-                $nextOfKinContact=PersonContacts::create([
+                $nextOfKinContact = PersonContacts::create([
                     'primary_phone' => $memberData['next_of_kin']['contact']['primary_phone'],
                     'secondary_phone' => $memberData['next_of_kin']['contact']['secondary_phone'],
                     'email' => $memberData['next_of_kin']['contact']['email'],
@@ -146,7 +149,7 @@ class HouseHoldController extends Controller
         $members = $household->household_persons;
 
         return response()->json([
-           'success' => true,
+            'success' => true,
             'members' => $members,
         ], 200);
     }
@@ -172,5 +175,120 @@ class HouseHoldController extends Controller
         ], 200);
     }
 
+    public function handleHouseHoldMigration(Request $request)
+    {
 
+        try {
+            $request->validate([
+                'house_hold_id' => 'required|integer',
+                'household_name' => 'required|string',
+                'from_location_id' => 'required|integer',
+                'to_location' => 'required|array',
+                'to_location.*.household_type_id' => 'required|integer',
+                'to_location.*.area_type_id' => 'required|integer',
+                'to_location.*.area_name' => 'required|string',
+                'to_location.*.area_code' => 'required|string',
+                'to_location.*.parent_area_id' => 'nullable|integer',
+                'reason_for_migration' => 'required|string',
+                'initiated_by_chv_id' => 'required|integer',
+                'approved_by_cha_id' => 'required|integer',
+                'date_of_migration' => 'required|date',
+                'is_approved' => 'required|boolean',
+            ]);
+
+            $household = HouseHold::where('household_name', $request->input('household_name'))->first();
+
+            $householdId = HouseHold::where('household_name', $request->input('household_name'))->first()->id;
+
+            if (!$household) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Household not found',
+                ], 404);
+            }
+
+            $newHouseHoldAddressData = $request->input('to_location')[0];
+
+
+            // Create the household address
+            $newHouseholdAddress = HouseHoldAdress::create([
+                'household_type_id' => $newHouseHoldAddressData['household_type_id'],
+                'area_type_id' => $newHouseHoldAddressData['area_type_id'],
+                'area_name' => $newHouseHoldAddressData['area_name'],
+                'area_code' => $newHouseHoldAddressData['area_code'],
+                'parent_area_id' => $newHouseHoldAddressData['parent_area_id'],
+            ]);
+
+
+            $migrateHouseHold = HouseHoldMigration::create([
+                'house_hold_id' => $request->input('house_hold_id'),
+                'from_location_id' => $request->input('from_location_id'),
+                'to_location_id' => $newHouseholdAddress->id,
+                'reason_for_migration' => $request->input('reason_for_migration'),
+                'initiated_by_chv_id' => $request->input('initiated_by_chv_id'),
+                'approved_by_cha_id' => $request->input('approved_by_cha_id'),
+                'date_of_migration' => $request->input('date_of_migration'),
+                'is_approved' => $request->input('is_approved'),
+            ]);
+
+            // Log the migration of the household here  tat is  log this migrateHouseHold
+            Log::info('Household migrated', ['migration' => $migrateHouseHold]);
+
+            if ($migrateHouseHold) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Household migrated successfully',
+                ], 200);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Household could not be migrated',
+                ], 500);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Household could not be migrated',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getAllMigratedHouseholds()
+    {
+        try {
+            $migratedHouseholds = HouseHoldMigration::all();
+
+            return response()->json([
+                'success' => true,
+                'migrated_households' => $migratedHouseholds,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed To retrive migrated households',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+
+    public function getAllPendingMigratedHouseholds()
+    {
+        try {
+            $migratedHouseholds = HouseHoldMigration::where('is_approved', false)->get();
+
+            return response()->json([
+                'success' => true,
+                'migrated_households' => $migratedHouseholds,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed To retrive migrated households',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
