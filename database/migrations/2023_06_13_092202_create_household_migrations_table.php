@@ -23,11 +23,11 @@ return new class extends Migration
             $table->boolean('is_approved')->default(false);
             $table->timestamps();
 
-            $table->foreign('house_hold_id')->references('id')->on('house_holds');
-            $table->foreign('from_location_id')->references('id')->on('house_hold_addresses');
-            $table->foreign('to_location_id')->references('id')->on('house_hold_addresses');
-            $table->foreign('initiated_by_chv_id')->references('id')->on('house_hold_person_details');
-            $table->foreign('approved_by_cha_id')->references('id')->on('house_hold_person_details');
+            $table->foreign('house_hold_id')->references('id')->on('house_holds')->onDelete('cascade');
+            $table->foreign('from_location_id')->references('id')->on('house_hold_addresses')->onDelete('cascade');
+            $table->foreign('to_location_id')->references('id')->on('house_hold_addresses')->onDelete('cascade');
+            $table->foreign('initiated_by_chv_id')->references('id')->on('house_hold_person_details')->onDelete('cascade');
+            $table->foreign('approved_by_cha_id')->references('id')->on('house_hold_person_details')->onDelete('cascade');
         });
     }
 

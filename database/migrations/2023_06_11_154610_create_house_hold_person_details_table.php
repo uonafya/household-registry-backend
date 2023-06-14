@@ -28,11 +28,11 @@ return new class extends Migration
             $table->unsignedBigInteger('household_id');
             $table->timestamps();
 
-            $table->foreign('residence_id')->references('id')->on('residences');
-            $table->foreign('person_contact_id')->references('id')->on('person_contacts');
-            $table->foreign('person_next_of_kin_id')->references('id')->on('person_next_of_kin');
-            $table->foreign('person_identifications_id')->references('id')->on('person_identification_types');
-            $table->foreign('household_id')->references('id')->on('house_holds');
+            $table->foreign('residence_id')->references('id')->on('residences')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('person_contact_id')->references('id')->on('person_contacts')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('person_next_of_kin_id')->references('id')->on('person_next_of_kin')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('person_identifications_id')->references('id')->on('person_identification_types')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('household_id')->references('id')->on('house_holds')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

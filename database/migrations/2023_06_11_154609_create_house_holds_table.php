@@ -19,8 +19,8 @@ return new class extends Migration
             $table->unsignedBigInteger('household_address_id');
             $table->timestamps();
 
-            $table->foreign('household_type_id')->references('id')->on('house_hold_types');
-            $table->foreign('household_address_id')->references('id')->on('house_hold_addresses');
+            $table->foreign('household_type_id')->references('id')->on('house_hold_types')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('household_address_id')->references('id')->on('house_hold_addresses')->onDelete('cascade')->onUpdate('cascade');
 
         });
     }
