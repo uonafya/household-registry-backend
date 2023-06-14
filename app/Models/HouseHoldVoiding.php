@@ -8,4 +8,29 @@ use Illuminate\Database\Eloquent\Model;
 class HouseHoldVoiding extends Model
 {
     use HasFactory;
+
+    protected $table = 'household_voiding';
+
+    protected $fillable = [
+        'house_hold_id',
+        'reason_for_voiding',
+        'date_voided',
+        'voided_by_id',
+        'is_voided_approval_status',
+    ];
+
+    public function household()
+    {
+        return $this->belongsTo(HouseHold::class);
+    }
+
+    public function voidedBy()
+    {
+        return $this->belongsTo(HouseHoldPersonDetail::class);
+    }
+
+    public function voidingApprovedBy()
+    {
+        return $this->belongsTo(HouseHoldPersonDetail::class);
+    }
 }
