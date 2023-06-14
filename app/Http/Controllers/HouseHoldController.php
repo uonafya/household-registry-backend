@@ -21,124 +21,133 @@ class HouseHoldController extends Controller
 
     public function saveHouseHoldAndAtleastOnePerson(Request $request)
     {
-        $request->validate([
-            'household_name' => 'required|string',
-            'household_identifier' => 'required|string',
-            'household_type' => 'required|array',
-            'household_type.household_type_name' => 'required|string',
-            'household_address' => 'required|array',
-            'household_address.area_type_id' => 'required|numeric',
-            'household_address.area_name' => 'required|string',
-            'household_address.area_code' => 'required|string',
-            'household_address.parent_area_id' => 'nullable',
-            'household_persons' => 'required|array',
-            'household_persons.*.firstName' => 'required|string',
-            'household_persons.*.lastName' => 'required|string',
-            'household_persons.*.dateOfBirth' => 'required|date',
-            'household_persons.*.gender' => 'required|string',
-            'household_persons.*.country' => 'required|string',
-            'household_persons.*.countyOfBirth' => 'required|string',
-            'household_persons.*.residence' => 'required|array',
-            'household_persons.*.residence.county' => 'required|string',
-            'household_persons.*.residence.sub_county' => 'required|string',
-            'household_persons.*.residence.ward' => 'required|string',
-            'household_persons.*.residence.village' => 'required|string',
-            'household_persons.*.contact' => 'required|array',
-            'household_persons.*.contact.primary_phone' => 'required|string',
-            'household_persons.*.contact.secondary_phone' => 'nullable|string',
-            'household_persons.*.contact.email' => 'nullable|email',
-            'household_persons.*.next_of_kin' => 'required|array',
-            'household_persons.*.next_of_kin.name' => 'required|string',
-            'household_persons.*.next_of_kin.relationship' => 'required|string',
-            'household_persons.*.next_of_kin.residence' => 'required|string',
-            'household_persons.*.identification' => 'required|array',
-            'household_persons.*.identification.identification_type' => 'required|string',
-            'household_persons.*.identification.identification_number' => 'required|string',
-            'household_persons.*.is_alive' => 'required|boolean',
-        ]);
+        try {
+            $request->validate([
+                'household_registered_by_id' => 'required|numeric',
+                'household_name' => 'required|string',
+                'household_identifier' => 'required|string',
+                'household_type' => 'required|array',
+                'household_type.household_type_name' => 'required|string',
+                'household_address' => 'required|array',
+                'household_address.area_type_id' => 'required|numeric',
+                'household_address.area_name' => 'required|string',
+                'household_address.area_code' => 'required|string',
+                'household_address.parent_area_id' => 'nullable',
+                'household_persons' => 'required|array',
+                'household_persons.*.firstName' => 'required|string',
+                'household_persons.*.lastName' => 'required|string',
+                'household_persons.*.dateOfBirth' => 'required|date',
+                'household_persons.*.gender' => 'required|string',
+                'household_persons.*.country' => 'required|string',
+                'household_persons.*.countyOfBirth' => 'required|string',
+                'household_persons.*.residence' => 'required|array',
+                'household_persons.*.residence.county' => 'required|string',
+                'household_persons.*.residence.sub_county' => 'required|string',
+                'household_persons.*.residence.ward' => 'required|string',
+                'household_persons.*.residence.village' => 'required|string',
+                'household_persons.*.contact' => 'required|array',
+                'household_persons.*.contact.primary_phone' => 'required|string',
+                'household_persons.*.contact.secondary_phone' => 'nullable|string',
+                'household_persons.*.contact.email' => 'nullable|email',
+                'household_persons.*.next_of_kin' => 'required|array',
+                'household_persons.*.next_of_kin.name' => 'required|string',
+                'household_persons.*.next_of_kin.relationship' => 'required|string',
+                'household_persons.*.next_of_kin.residence' => 'required|string',
+                'household_persons.*.identification' => 'required|array',
+                'household_persons.*.identification.identification_type' => 'required|string',
+                'household_persons.*.identification.identification_number' => 'required|string',
+                'household_persons.*.is_alive' => 'required|boolean',
+            ]);
 
-        // Create the household type
-        $householdType = HouseHoldType::create([
-            'household_type_name' => $request->input('household_type.household_type_name'),
-        ]);
+            // Create the household type
+            $householdType = HouseHoldType::create([
+                'household_type_name' => $request->input('household_type.household_type_name'),
+            ]);
 
-        // Create the household address
-        $householdAddress = HouseHoldAdress::create([
-            'household_type_id' => $householdType->id,
-            'area_type_id' => $request->input('household_address.area_type_id'),
-            'area_name' => $request->input('household_address.area_name'),
-            'area_code' => $request->input('household_address.area_code'),
-            'parent_area_id' => $request->input('household_address.parent_area_id'),
-        ]);
+            // Create the household address
+            $householdAddress = HouseHoldAdress::create([
+                'household_type_id' => $householdType->id,
+                'area_type_id' => $request->input('household_address.area_type_id'),
+                'area_name' => $request->input('household_address.area_name'),
+                'area_code' => $request->input('household_address.area_code'),
+                'parent_area_id' => $request->input('household_address.parent_area_id'),
+            ]);
 
-        // Create the household
-        $household = HouseHold::create([
-            'household_name' => $request->input('household_name'),
-            'household_identifier' => $request->input('household_identifier'),
-            'household_type_id' => $householdType->id,
-            'household_address_id' => $householdAddress->id,
-        ]);
+            // Create the household
+            $household = HouseHold::create([
+                'household_name' => $request->input('household_name'),
+                'household_identifier' => $request->input('household_identifier'),
+                'household_type_id' => $householdType->id,
+                'household_address_id' => $householdAddress->id,
+                'household_registered_by_id' => $request->input('household_registered_by_id'),
+            ]);
 
 
-        // Check if there are any members provided
-        if ($request->has('household_persons')) {
-            // Create the members and associate them with the household
-            foreach ($request->input('household_persons') as $memberData) {
-                $residence = Residence::create([
-                    'county' => $memberData['residence']['county'],
-                    'sub_county' => $memberData['residence']['sub_county'],
-                    'ward' => $memberData['residence']['ward'],
-                    'village' => $memberData['residence']['village'],
-                ]);
+            // Check if there are any members provided
+            if ($request->has('household_persons')) {
+                // Create the members and associate them with the household
+                foreach ($request->input('household_persons') as $memberData) {
+                    $residence = Residence::create([
+                        'county' => $memberData['residence']['county'],
+                        'sub_county' => $memberData['residence']['sub_county'],
+                        'ward' => $memberData['residence']['ward'],
+                        'village' => $memberData['residence']['village'],
+                    ]);
 
-                $contact = PersonContacts::create([
-                    'primary_phone' => $memberData['contact']['primary_phone'],
-                    'secondary_phone' => $memberData['contact']['secondary_phone'],
-                    'email' => $memberData['contact']['email'],
-                ]);
+                    $contact = PersonContacts::create([
+                        'primary_phone' => $memberData['contact']['primary_phone'],
+                        'secondary_phone' => $memberData['contact']['secondary_phone'],
+                        'email' => $memberData['contact']['email'],
+                    ]);
 
-                //save next of kin contact
-                $nextOfKinContact = PersonContacts::create([
-                    'primary_phone' => $memberData['next_of_kin']['contact']['primary_phone'],
-                    'secondary_phone' => $memberData['next_of_kin']['contact']['secondary_phone'],
-                    'email' => $memberData['next_of_kin']['contact']['email'],
-                ]);
+                    //save next of kin contact
+                    $nextOfKinContact = PersonContacts::create([
+                        'primary_phone' => $memberData['next_of_kin']['contact']['primary_phone'],
+                        'secondary_phone' => $memberData['next_of_kin']['contact']['secondary_phone'],
+                        'email' => $memberData['next_of_kin']['contact']['email'],
+                    ]);
 
-                $nextOfKin = PersonNextOfKin::create([
-                    'name' => $memberData['next_of_kin']['name'],
-                    'relationship' => $memberData['next_of_kin']['relationship'],
-                    'residence' => $memberData['next_of_kin']['residence'],
-                    'contact_id' => $nextOfKinContact->id,
-                ]);
+                    $nextOfKin = PersonNextOfKin::create([
+                        'name' => $memberData['next_of_kin']['name'],
+                        'relationship' => $memberData['next_of_kin']['relationship'],
+                        'residence' => $memberData['next_of_kin']['residence'],
+                        'contact_id' => $nextOfKinContact->id,
+                    ]);
 
-                $identification = PersonIdentificationType::create([
-                    'identification_type' => $memberData['identification']['identification_type'],
-                    'identification_number' => $memberData['identification']['identification_number'],
-                ]);
+                    $identification = PersonIdentificationType::create([
+                        'identification_type' => $memberData['identification']['identification_type'],
+                        'identification_number' => $memberData['identification']['identification_number'],
+                    ]);
 
-                $member = HouseHoldPersonDetails::create([
-                    'firstName' => $memberData['firstName'],
-                    'lastName' => $memberData['lastName'],
-                    'dateOfBirth' => $memberData['dateOfBirth'],
-                    'gender' => $memberData['gender'],
-                    'country' => $memberData['country'],
-                    'countyOfBirth' => $memberData['countyOfBirth'],
-                    'residence_id' => $residence->id,
-                    'person_contact_id' => $contact->id,
-                    'person_next_of_kin_id' => $nextOfKin->id,
-                    'person_identifications_id' => $identification->id,
-                    'is_alive' => $memberData['is_alive'],
-                    'house_hold_id' => $household->id,
-                ]);
+                    $member = HouseHoldPersonDetails::create([
+                        'firstName' => $memberData['firstName'],
+                        'lastName' => $memberData['lastName'],
+                        'dateOfBirth' => $memberData['dateOfBirth'],
+                        'gender' => $memberData['gender'],
+                        'country' => $memberData['country'],
+                        'countyOfBirth' => $memberData['countyOfBirth'],
+                        'residence_id' => $residence->id,
+                        'person_contact_id' => $contact->id,
+                        'person_next_of_kin_id' => $nextOfKin->id,
+                        'person_identifications_id' => $identification->id,
+                        'is_alive' => $memberData['is_alive'],
+                        'house_hold_id' => $household->id,
+                    ]);
 
-                $household->household_persons()->save($member);
+                    $household->household_persons()->save($member);
+                }
             }
-        }
 
-        return response()->json([
-            'message' => 'Successfully created household!',
-            'household' => $household,
-        ], 201);
+            return response()->json([
+                'message' => 'Household created.Pending approval',
+                'household' => $household,
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to create household!',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function getHouseholdMembers($householdId)
@@ -155,14 +164,41 @@ class HouseHoldController extends Controller
     }
 
 
-    public function getAllHouseholds()
+    public function getAllHouseholds(Request $request)
     {
-        $households = HouseHold::all();
+        try {
 
-        return response()->json([
-            'success' => true,
-            'households' => $households,
-        ], 200);
+            $isVoided = $request->input('is_voided');
+            $isMuted = $request->input('is_muted');
+            $isApproved = $request->input('is_approved');
+
+            $query = HouseHold::query();
+
+            if ($isVoided !== null) {
+                $query->where('is_voided', $isVoided);
+            }
+            if ($isMuted !== null) {
+                $query->where('is_muted', $isMuted);
+            }
+            if ($isApproved !== null) {
+                $query->where('is_household_approved', $isApproved);
+            }
+
+            dd($query->get());
+
+            $households = $query->get();
+
+            return response()->json([
+                'success' => true,
+                'households' => $households,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while fetching households',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function getApprovedHouseholds($isApproved)
@@ -191,14 +227,10 @@ class HouseHoldController extends Controller
                 'to_location.*.parent_area_id' => 'nullable|integer',
                 'reason_for_migration' => 'required|string',
                 'initiated_by_chv_id' => 'required|integer',
-                'approved_by_cha_id' => 'required|integer',
                 'date_of_migration' => 'required|date',
-                'is_approved' => 'required|boolean',
             ]);
 
-            $household = HouseHold::where('household_name', $request->input('household_name'))->first();
-
-            $householdId = HouseHold::where('household_name', $request->input('household_name'))->first()->id;
+            $household = HouseHold::where('id', $request->input('house_hold_id'))->first();
 
             if (!$household) {
                 return response()->json([
@@ -226,18 +258,15 @@ class HouseHoldController extends Controller
                 'to_location_id' => $newHouseholdAddress->id,
                 'reason_for_migration' => $request->input('reason_for_migration'),
                 'initiated_by_chv_id' => $request->input('initiated_by_chv_id'),
-                'approved_by_cha_id' => $request->input('approved_by_cha_id'),
                 'date_of_migration' => $request->input('date_of_migration'),
-                'is_approved' => $request->input('is_approved'),
+                'is_approved' => false,
             ]);
-
-            // Log the migration of the household here  tat is  log this migrateHouseHold
-            Log::info('Household migrated', ['migration' => $migrateHouseHold]);
 
             if ($migrateHouseHold) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'Household migrated successfully',
+                    'message' => 'Household migration approval sent.',
+                    'migrated_household' => $migrateHouseHold,
                 ], 200);
             } else {
                 return response()->json([
@@ -249,6 +278,45 @@ class HouseHoldController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Household could not be migrated',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+    public function approveHouseHoldMigration(Request $request)
+    {
+        try {
+
+            $request->validate([
+                'house_hold_id' => 'required|integer',
+                'household_approved_by' => 'required|boolean',
+            ]);
+
+            $householdMigration = HouseHoldMigration::where('house_hold_id', $request->input('house_hold_id'))->first();
+
+            if (!$householdMigration) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Household migration not found',
+                ], 404);
+            }
+
+            $householdMigration->is_approved = true;
+            $householdMigration->approved_by = $request->input('household_approved_by');
+            $householdMigration->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Household migration approved',
+                'household_migration' => $householdMigration,
+            ], 200);
+
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Household migration could not be approved',
                 'error' => $e->getMessage()
             ], 500);
         }

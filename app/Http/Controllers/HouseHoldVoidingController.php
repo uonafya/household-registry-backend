@@ -88,7 +88,7 @@ class HouseHoldVoidingController extends Controller
 
             //update the is_muted inside the household table
             $household = HouseHold::where('id', $voidedHouseHold->house_hold_id)->first();
-            $household->is_muted = true;
+            $household->is_voided = true;
             $household->save();
 
             return response()->json(
