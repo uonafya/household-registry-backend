@@ -188,7 +188,6 @@ class HouseHoldController extends Controller
     {
         $household = HouseHold::findOrFail($householdId);
 
-        // Retrieve all the members of the household
         $members = $household->household_persons;
 
         return response()->json([
@@ -337,7 +336,7 @@ class HouseHoldController extends Controller
             }
 
             $householdMigration->is_approved = true;
-            $householdMigration->approved_by = $request->input('household_approved_by');
+            $householdMigration->approved_by_cha_id = $request->input('household_approved_by');
             $householdMigration->save();
 
             return response()->json([
