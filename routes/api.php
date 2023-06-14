@@ -46,6 +46,7 @@ Route::get('/households/approved/{isApproved}', [HouseHoldController::class, 'ge
 Route::post('/households/migration', [HouseHoldController::class, 'handleHouseHoldMigration']);
 Route::get('/households/migration', [HouseHoldController::class, 'getAllMigratedHouseholds']);
 Route::get('/households/migration/pending', [HouseHoldController::class, 'getAllPendingMigratedHouseholds']);
+Route::post('/households/migration/approve', [HouseHoldController::class, 'approveHouseHoldMigration']);
 
 //muting a household
 Route::post('/households/mute', [HouseHoldMutingController::class, 'searchAndMuteAHouseHold']);
