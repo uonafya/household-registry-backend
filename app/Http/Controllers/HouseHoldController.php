@@ -150,6 +150,40 @@ class HouseHoldController extends Controller
         }
     }
 
+    public function approveRegisteredHouseHold(Request $request)
+    {
+        try {
+            $request->validate([
+                'house_hold_id' => 'required|integer',
+                'approved_by' => 'required|integer',
+            ]);
+
+            $household = HouseHold::findOrFail($request->input('house_hold_id'));
+
+            if (!$household) {
+                return response()->json([
+                    'message' => 'Household not found!',
+                ], 404);
+            }
+
+            $household->is_household_approved = true;
+            $household->household_approved_by_id = $request->input('approved_by');
+            $household->save();
+
+            return response()->json([
+                'message' => 'Household approved!',
+                'household' => $household,
+            ], 200);
+
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to approve household!',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
     public function getHouseholdMembers($householdId)
     {
         $household = HouseHold::findOrFail($householdId);
@@ -311,8 +345,6 @@ class HouseHoldController extends Controller
                 'message' => 'Household migration approved',
                 'household_migration' => $householdMigration,
             ], 200);
-
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,

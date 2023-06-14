@@ -41,6 +41,7 @@ Route::post('login', [AuthController::class, 'login']);
 Route::post('/households', [HouseHoldController::class, 'saveHouseHoldAndAtleastOnePerson']);
 Route::get('/households/{householdId}/members', [HouseHoldController::class, 'getHouseholdMembers']);
 Route::get('/households', [HouseHoldController::class, 'getAllHouseholds']);
+Route::post('/households/approve', [HouseHoldController::class, 'approveRegisteredHouseHold']);
 Route::get('/households/approved/{isApproved}', [HouseHoldController::class, 'getApprovedHouseholds']);
 Route::post('/households/migration', [HouseHoldController::class, 'handleHouseHoldMigration']);
 Route::get('/households/migration', [HouseHoldController::class, 'getAllMigratedHouseholds']);
