@@ -35,6 +35,7 @@ class HouseHoldController extends Controller
                 'household_address.parent_area_id' => 'nullable',
                 'household_persons' => 'required|array',
                 'household_persons.*.firstName' => 'required|string',
+                'household_persons.*.middleName' => 'nullable|string',
                 'household_persons.*.lastName' => 'required|string',
                 'household_persons.*.dateOfBirth' => 'required|date',
                 'household_persons.*.gender' => 'required|string',
@@ -121,6 +122,7 @@ class HouseHoldController extends Controller
 
                     $member = HouseHoldPersonDetails::create([
                         'firstName' => $memberData['firstName'],
+                        'middleName' => $memberData['middleName'],
                         'lastName' => $memberData['lastName'],
                         'dateOfBirth' => $memberData['dateOfBirth'],
                         'gender' => $memberData['gender'],
@@ -174,8 +176,6 @@ class HouseHoldController extends Controller
                 'message' => 'Household approved!',
                 'household' => $household,
             ], 200);
-
-
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to approve household!',
@@ -216,8 +216,6 @@ class HouseHoldController extends Controller
             if ($isApproved !== null) {
                 $query->where('is_household_approved', $isApproved);
             }
-
-            dd($query->get());
 
             $households = $query->get();
 
