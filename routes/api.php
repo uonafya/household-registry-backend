@@ -63,6 +63,7 @@ Route::post('/households/void/approve', [HouseHoldVoidingController::class, 'app
 Route::post('/households/person', [HouseHoldPersonDetailsController::class, 'registerNewHouseHoldPerson']);
 Route::get('/households/person', [HouseHoldPersonDetailsController::class, 'getAllHouseHoldPersons']);
 Route::get('/households/person/{id}', [HouseHoldPersonDetailsController::class, 'getHouseHoldPersonDetails']);
+Route::put('householdpersons/{id}', [HouseHoldPersonDetailsController::class, 'updateHouseHoldPersonDetails']);
 
 
 //HouseHoldAdress API endpoints
