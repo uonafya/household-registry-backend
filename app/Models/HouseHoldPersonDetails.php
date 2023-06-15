@@ -27,22 +27,22 @@ class HouseHoldPersonDetails extends Model
 
     public function residence()
     {
-        return $this->belongsTo(Residence::class);
+        return $this->belongsTo(Residence::class, 'residence_id');
     }
 
     public function personContact()
     {
-        return $this->belongsTo(PersonContacts::class);
+        return $this->belongsTo(PersonContacts::class, 'person_contact_id');
     }
 
     public function personNextOfKin()
     {
-        return $this->belongsTo(PersonNextOfKin::class);
+        return $this->belongsTo(PersonNextOfKin::class, 'person_next_of_kin_id');
     }
 
     public function personIdentification()
     {
-        return $this->belongsTo(PersonIdentificationType::class);
+        return $this->belongsTo(PersonIdentificationType::class, 'person_identifications_id');
     }
 
     public function household()

@@ -9,6 +9,7 @@ use App\Http\Controllers\ResidenceController;
 use App\Http\Controllers\AdministrativeHierachyController;
 use App\Http\Controllers\HouseHoldMuting;
 use App\Http\Controllers\HouseHoldMutingController;
+use App\Http\Controllers\HouseHoldPersonDetailsController;
 use App\Http\Controllers\HouseHoldVoidingController;
 use App\Http\Controllers\PersonContactsController;
 use App\Http\Controllers\PersonIdentificationTypeController;
@@ -57,6 +58,11 @@ Route::post('/households/mute/approve', [HouseHoldMutingController::class, 'appr
 Route::post('/households/void', [HouseHoldVoidingController::class, 'searchAndVoidAHouseHold']);
 Route::get('/households/void', [HouseHoldVoidingController::class, 'getAllVoidedHouseHolds']);
 Route::post('/households/void/approve', [HouseHoldVoidingController::class, 'approveHouseVoiding']);
+
+//household person
+Route::post('/households/person', [HouseHoldPersonDetailsController::class, 'registerNewHouseHoldPerson']);
+Route::get('/households/person', [HouseHoldPersonDetailsController::class, 'getAllHouseHoldPersons']);
+Route::get('/households/person/{id}', [HouseHoldPersonDetailsController::class, 'getHouseHoldPersonDetails']);
 
 
 //HouseHoldAdress API endpoints
