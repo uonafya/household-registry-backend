@@ -7,7 +7,22 @@ use Illuminate\Http\Request;
 
 class ClientRegistyController extends Controller
 {
-    
+    private $tokenEndpoint;
+    private $searchEndpoint;
+    private $clientId;
+    private $clientSecret;
+    private $scope;
+
+    public function __construct()
+    {
+        $this->tokenEndpoint = env('CLIENT_REGISTRY_TOKEN_ENDPOINT');
+        $this->searchEndpoint = env('CLIENT_REGISTRY_SEARCH_ENDPOINT');
+        $this->clientId = env('CLIENT_REGISTRY_CLIENT_ID');
+        $this->clientSecret = env('CLIENT_REGISTRY_CLIENT_SECRET');
+        $this->scope = env('CLIENT_REGISTRY_SCOPE');
+    }
+
+
     public function searchClient($countryCode, $identifierType, $identifier)
     {
         try {
@@ -16,7 +31,7 @@ class ClientRegistyController extends Controller
             $accessToken = $tokenResponse['access_token'];
 
             // Make a request to search for the client
-            $client = new Client(['base_uri' => 'https://dhpstagingapi.health.go.ke']);
+            $client = new Client(['base_uri' => $this->searchEndpoint]);
             $response = $client->get("/partners/registry/search/{$countryCode}/{$identifierType}/{$identifier}", [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $accessToken,
@@ -43,16 +58,17 @@ class ClientRegistyController extends Controller
         }
     }
 
-    private function getToken(){
-        $client = new Client(['base_uri' => 'https://dhpidentitystagingapi.health.go.ke']);
+    private function getToken()
+    {
+        $client = new Client(['base_uri' => $this->tokenEndpoint]);
         $response = $client->post('/connect/token', [
             'headers' => [
                 'Content-Type' => 'application/x-www-form-urlencoded',
             ],
             'form_params' => [
-                'client_id' => 'partner.test.client',
-                'client_secret' => 'partnerTestPwd',
-                'scope' => 'DHP.Gateway DHP.Partners',
+                'client_id' => $this->clientId,
+                'client_secret' => $this->clientSecret,
+                'scope' => $this->scope,
                 'grant_type' => 'client_credentials',
             ],
         ]);
