@@ -40,7 +40,7 @@ Route::post('login', [AuthController::class, 'login']);
 
 //HouseHold API endpoints
 Route::post('/households', [HouseHoldController::class, 'saveHouseHoldAndAtleastOnePerson']);
-Route::get('/households/{householdId}/members', [HouseHoldController::class, 'getHouseholdMembers']);
+// Route::get('/households/{householdId}/members', [HouseHoldController::class, 'getHouseholdMembers']);
 Route::get('/households', [HouseHoldController::class, 'getAllHouseholds']);
 Route::post('/households/approve', [HouseHoldController::class, 'approveRegisteredHouseHold']);
 Route::get('/households/approved/{isApproved}', [HouseHoldController::class, 'getApprovedHouseholds']);
@@ -48,6 +48,11 @@ Route::post('/households/migration', [HouseHoldController::class, 'handleHouseHo
 Route::get('/households/migration', [HouseHoldController::class, 'getAllMigratedHouseholds']);
 Route::get('/households/migration/pending', [HouseHoldController::class, 'getAllPendingMigratedHouseholds']);
 Route::post('/households/migration/approve', [HouseHoldController::class, 'approveHouseHoldMigration']);
+
+//membership
+
+Route::get('/household/{householdId}/members', [HouseHoldMembershipController::class, 'getHouseholdMembers']);
+
 
 //muting a household
 Route::post('/households/mute', [HouseHoldMutingController::class, 'searchAndMuteAHouseHold']);

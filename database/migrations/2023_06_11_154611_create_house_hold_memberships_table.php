@@ -16,14 +16,15 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('household_person_details_id');
             $table->unsignedBigInteger('household_member_type_id');
-            $table->unsignedBigInteger('household_id');
+            $table->unsignedBigInteger('house_hold_id');
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->nullable();
+            $table->softDeletes();
 
             // Define foreign key constraints
             $table->foreign('household_person_details_id')->references('id')->on('house_hold_person_detail')->onUpdate('cascade');
             $table->foreign('household_member_type_id')->references('id')->on('household_member_type')->onUpdate('cascade');
-            $table->foreign('household_id')->references('id')->on('house_hold')->onUpdate('cascade');
+            $table->foreign('house_hold_id')->references('id')->on('house_hold')->onUpdate('cascade');
         });
     }
 

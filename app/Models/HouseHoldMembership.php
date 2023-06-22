@@ -16,7 +16,7 @@ class HouseHoldMembership extends Model
     protected $fillable = [
         'household_person_details_id',
         'household_member_type_id',
-        'household_id',
+        'house_hold_id',
     ];
 
 
@@ -33,7 +33,12 @@ class HouseHoldMembership extends Model
 
     public function household()
     {
-        return $this->belongsTo(HouseHold::class, 'household_id');
+        return $this->belongsTo(HouseHold::class, 'house_hold_id');
+    }
+
+    public function household_persons()
+    {
+        return $this->hasMany(HouseHoldPersonDetails::class);
     }
 
 }
