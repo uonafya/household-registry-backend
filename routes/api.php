@@ -7,6 +7,7 @@ use App\Http\Controllers\HouseHoldMembershipController;
 use App\Http\Controllers\HouseholdMemberTypeController;
 use App\Http\Controllers\ResidenceController;
 use App\Http\Controllers\AdministrativeHierachyController;
+use App\Http\Controllers\ClientRegistyController;
 use App\Http\Controllers\HouseHoldMuting;
 use App\Http\Controllers\HouseHoldMutingController;
 use App\Http\Controllers\HouseHoldPersonDetailsController;
@@ -37,6 +38,9 @@ Route::post('register', [AuthController::class, 'register']);
 
 // Login
 Route::post('login', [AuthController::class, 'login']);
+
+//client registry
+Route::get('/client/search/{countryCode}/{identifierType}/{identifier}', [ClientRegistyController::class, 'searchClient']);
 
 //HouseHold API endpoints
 Route::post('/households', [HouseHoldController::class, 'saveHouseHoldAndAtleastOnePerson']);
