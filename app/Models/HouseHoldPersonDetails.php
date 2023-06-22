@@ -4,15 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class HouseHoldPersonDetails extends Model
 {
     use HasFactory;
+    use SoftDeletes;
+
+    protected $table = 'house_hold_person_detail';
 
     protected $fillable = [
         'firstName',
         'middleName',
         'lastName',
+        'nupi_no',
         'dateOfBirth',
         'gender',
         'country',
@@ -22,7 +27,7 @@ class HouseHoldPersonDetails extends Model
         'person_contact_id',
         'person_next_of_kin_id',
         'person_identifications_id',
-        'house_hold_id',
+        'household_member_type_id',
     ];
 
     public function residence()
@@ -45,8 +50,8 @@ class HouseHoldPersonDetails extends Model
         return $this->belongsTo(PersonIdentificationType::class, 'person_identifications_id');
     }
 
-    public function household()
+    public function householdMemberType()
     {
-        return $this->belongsTo(Household::class, 'house_hold_id');
+        return $this->belongsTo(HouseholdMemberType::class, 'household_member_type_id');
     }
 }

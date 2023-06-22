@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\HouseHold;
+use App\Models\HouseholdMemberType;
 use App\Models\HouseHoldMigration;
 use App\Models\HouseHoldType;
 use App\Models\HouseHoldAdress;
+use App\Models\HouseHoldMembership;
 use App\Models\HouseHoldPersonDetails;
 use App\Models\PersonContacts;
 use App\Models\PersonIdentificationType;
@@ -23,7 +25,8 @@ class HouseHoldController extends Controller
     {
         try {
             $request->validate([
-                'household_registered_by_id' => 'required|numeric',
+                'household_registered_by_id' => 'nullable|numeric',
+                'household_approved_by_id' => 'nullable|numeric',
                 'household_name' => 'required|string',
                 'household_identifier' => 'required|string',
                 'household_type' => 'required|array',
@@ -57,6 +60,8 @@ class HouseHoldController extends Controller
                 'household_persons.*.identification' => 'required|array',
                 'household_persons.*.identification.identification_type' => 'required|string',
                 'household_persons.*.identification.identification_number' => 'required|string',
+                'household_persons.*.household_memberships' => 'required|array',
+                'household_persons.*.household_memberships.*.household_member_type_name' => 'required|string',
                 'household_persons.*.is_alive' => 'required|boolean',
             ]);
 
@@ -81,6 +86,7 @@ class HouseHoldController extends Controller
                 'household_type_id' => $householdType->id,
                 'household_address_id' => $householdAddress->id,
                 'household_registered_by_id' => $request->input('household_registered_by_id'),
+                'household_approved_by_id' => $request->input('household_approved_by_id'),
             ]);
 
 
@@ -120,6 +126,10 @@ class HouseHoldController extends Controller
                         'identification_number' => $memberData['identification']['identification_number'],
                     ]);
 
+                    $houseHoldMemberType=HouseholdMemberType::create([
+                        'household_member_type_name'=>$memberData['household_member_type_name'],
+                    ]);
+
                     $member = HouseHoldPersonDetails::create([
                         'firstName' => $memberData['firstName'],
                         'middleName' => $memberData['middleName'],
@@ -132,11 +142,20 @@ class HouseHoldController extends Controller
                         'person_contact_id' => $contact->id,
                         'person_next_of_kin_id' => $nextOfKin->id,
                         'person_identifications_id' => $identification->id,
+                        'household_member_type_id'=>$houseHoldMemberType->id,
                         'is_alive' => $memberData['is_alive'],
-                        'house_hold_id' => $household->id,
                     ]);
 
                     $household->household_persons()->save($member);
+
+                    $householdMemberType = HouseholdMemberType::where('household_member_type_name', $memberData['household_memberships'][0]['household_member_type_name'])->first();
+                    $householdMembership = HouseHoldMembership::create([
+                        'household_person_details_id' => $member->id,
+                        'household_member_type_id' => $householdMemberType->id,
+                        'household_id' => $household->id,
+                    ]);
+
+                    $household->household_memberships()->save($householdMembership);
                 }
             }
 
