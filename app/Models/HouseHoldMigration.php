@@ -16,8 +16,8 @@ class HouseHoldMigration extends Model
 
     protected $fillable = [
         'house_hold_id',
-        'from_location_id',
-        'to_location_id',
+        'old_residence_id',
+        'new_residence_id',
         'reason_for_migration',
         'initiated_by_chv_id',
         'date_of_migration',

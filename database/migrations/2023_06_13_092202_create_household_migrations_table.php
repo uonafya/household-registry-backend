@@ -24,6 +24,7 @@ return new class extends Migration
             $table->boolean('is_approved')->default(false);
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->nullable();
+            $table->softDeletes();
 
             $table->foreign('house_hold_id')->references('id')->on('house_hold');
             $table->foreign('old_residence_id')->references('id')->on('house_hold_address');

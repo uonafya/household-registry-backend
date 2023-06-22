@@ -22,6 +22,7 @@ return new class extends Migration
             $table->boolean('is_voided_approval_status');
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->nullable();
+            $table->softDeletes();
 
             $table->foreign('house_hold_id')->references('id')->on('house_hold');
             $table->foreign('voided_by_id')->references('id')->on('house_hold_person_detail');
