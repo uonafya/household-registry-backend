@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('house_holds', function (Blueprint $table) {
+        Schema::table('house_hold', function (Blueprint $table) {
             $table->boolean('is_household_approved')->default(false);
         });
     }
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('house_holds', function (Blueprint $table) {
+        Schema::table('house_hold', function (Blueprint $table) {
             //
         });
     }

@@ -63,6 +63,7 @@ Route::post('/households/void/approve', [HouseHoldVoidingController::class, 'app
 Route::post('/households/person', [HouseHoldPersonDetailsController::class, 'registerNewHouseHoldPerson']);
 Route::get('/households/person', [HouseHoldPersonDetailsController::class, 'getAllHouseHoldPersons']);
 Route::get('/households/person/{id}', [HouseHoldPersonDetailsController::class, 'getHouseHoldPersonDetails']);
+Route::put('householdpersons/{id}', [HouseHoldPersonDetailsController::class, 'updateHouseHoldPersonDetails']);
 
 
 //HouseHoldAdress API endpoints
@@ -74,8 +75,12 @@ Route::resource('householdmembership', HouseHoldMembershipController::class);
 Route::get('/householdmembership/search/{household_person_details_id}', [HouseHoldMembershipController::class, 'search']);
 
 //HouseholdMemberType API endpoints
-Route::resource('householdmembertype', HouseholdMemberTypeController::class);
-Route::get('/householdmembertype/search/{household_membership_name}', [HouseholdMemberTypeController::class, 'search']);
+Route::get('/household-member-types', [HouseholdMemberTypeController::class, 'index']);
+Route::post('/household-member-types', [HouseholdMemberTypeController::class, 'store']);
+Route::get('/household-member-types/{id}', [HouseholdMemberTypeController::class, 'show']);
+Route::put('/household-member-types/{id}', [HouseholdMemberTypeController::class, 'update']);
+Route::delete('/household-member-types/{id}', [HouseholdMemberTypeController::class, 'destroy']);
+
 
 // AdministrativeHierachy model CRUD endpoints
 Route::post('administrativehierachy', [AdministrativeHierachyController::class, 'store']);

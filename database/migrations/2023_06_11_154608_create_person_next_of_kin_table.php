@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -13,14 +14,15 @@ return new class extends Migration
     {
         Schema::create('person_next_of_kin', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('relationship');
-            $table->string('residence');
+            $table->string('name',100);
+            $table->string('relationship',50);
+            $table->string('residence',50);
             $table->unsignedBigInteger('contact_id');
-            $table->timestamps();
+            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->nullable();
+            $table->softDeletes();
 
-            // Define foreign key constraints
-            $table->foreign('contact_id')->references('id')->on('person_contacts')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('contact_id')->references('id')->on('person_contact')->onUpdate('cascade');
         });
     }
 
