@@ -149,7 +149,7 @@ class HouseHoldController extends Controller
                 $householdMembership = HouseHoldMembership::create([
                     'household_person_details_id' => $member->id,
                     'household_member_type_id' => $householdMemberType->id,
-                    'household_id' => $household->id,
+                    'house_hold_id' => $household->id,
                 ]);
 
                 // $household->household_memberships()->save($householdMembership);
@@ -203,16 +203,29 @@ class HouseHoldController extends Controller
 
     public function getHouseholdMembers($householdId)
     {
-        $household = HouseHold::findOrFail($householdId);
-
-        $members = $household->household_persons;
-
-        return response()->json([
-            'success' => true,
-            'members' => $members,
-        ], 200);
+        try {
+            $household = HouseHold::findOrFail($householdId);
+            
+            if(!$household) {
+                return response()->json([
+                    'message' => 'Household not found!',
+                ], 404);
+            }
+            
+            $members = $household->household_memberships()->with('householdPersonDetails')->get();
+            
+            return response()->json([
+                'success' => true,
+                'members' => $members,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to fetch household members!',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
-
+    
 
     public function getAllHouseholds(Request $request)
     {
