@@ -83,205 +83,137 @@ class ClientRegistyController extends Controller
 
         return json_decode($response->getBody(), true);
     }
-
-    //get only the details I want then save it to my local db
-
     public function savePersonToClientRegistry(Request $request)
-{
-    $validator = Validator::make($request->all(), [
-        'firstName' => 'required|string',
-        'middleName' => 'nullable|string',
-        'lastName' => 'required|string',
-        'dateOfBirth' => 'required|date',
-        'maritalStatus' => 'nullable|string',
-        'gender' => 'required|string',
-        'occupation' => 'nullable|string',
-        'religion' => 'nullable|string',
-        'educationLevel' => 'nullable|string',
-        'country' => 'required|string',
-        'countyOfBirth' => 'required|string',
-        'isAlive' => 'required|boolean',
-        'originFacilityKmflCode' => 'nullable|string',
-        'isOnART' => 'required|boolean',
-        'nascopCCCNumber' => 'nullable|string',
-        'residence' => 'required|array',
-        'residence.county' => 'required|string',
-        'residence.subCounty' => 'nullable|string',
-        'residence.ward' => 'nullable|string',
-        'residence.village' => 'nullable|string',
-        'residence.landMark' => 'nullable|string',
-        'residence.address' => 'nullable|string',
-        'identifications' => 'required|array',
-        'identifications.*.CountryCode' => 'required|string',
-        'identifications.*.identificationType' => 'required|string',
-        'identifications.*.identificationNumber' => 'required|string',
-        'contact' => 'required|array',
-        'contact.primaryPhone' => 'required|string',
-        'contact.secondaryPhone' => 'nullable|string',
-        'contact.emailAddress' => 'nullable|email',
-        'nextOfKin' => 'required|array',
-        'nextOfKin.name' => 'required|string',
-        'nextOfKin.relationship' => 'required|string',
-        'nextOfKin.residence' => 'nullable|string',
-        'nextOfKin.contact' => 'nullable|array',
-        'nextOfKin.contact.primaryPhone' => 'nullable|string',
-        'nextOfKin.contact.secondaryPhone' => 'nullable|string',
-        'nextOfKin.contact.emailAddress' => 'nullable|email',
-    ]);
-
-    if ($validator->fails()) {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Validation failed',
-            'errors' => $validator->errors(),
-        ], 400);
-    }
-
-    try {
-        return DB::transaction(function () use ($request) {
-            // Save to the client registry
-            $token = $this->getToken();
-
-            $clientRegistryResponse = $this->sendDataToClientRegistry($token, [
-                'firstName' => $request->input('firstName'),
-                'middleName' => $request->input('middleName'),
-                'lastName' => $request->input('lastName'),
-                'dateOfBirth' => $request->input('dateOfBirth'),
-                'maritalStatus' => $request->input('maritalStatus'),
-                'gender' => $request->input('gender'),
-                'occupation' => $request->input('occupation'),
-                'religion' => $request->input('religion'),
-                'educationLevel' => $request->input('educationLevel'),
-                'country' => $request->input('country'),
-                'countyOfBirth' => $request->input('countyOfBirth'),
-                'isAlive' => $request->input('isAlive'),
-                'originFacilityKmflCode' => $request->input('originFacilityKmflCode'),
-                'isOnART' => $request->input('isOnART'),
-                'nascopCCCNumber' => $request->input('nascopCCCNumber'),
-                'residence' => [
-                    'county' => $request->input('residence.county'),
-                    'subCounty' => $request->input('residence.subCounty'),
-                    'ward' => $request->input('residence.ward'),
-                    'village' => $request->input('residence.village'),
-                    'landMark' => $request->input('residence.landMark'),
-                    'address' => $request->input('residence.address'),
-                ],
-                'identifications' => $request->input('identifications'),
-                'contact' => [
-                    'primaryPhone' => $request->input('contact.primaryPhone'),
-                    'secondaryPhone' => $request->input('contact.secondaryPhone'),
-                    'emailAddress' => $request->input('contact.emailAddress'),
-                ],
-                'nextOfKin' => [
-                    'name' => $request->input('nextOfKin.name'),
-                    'relationship' => $request->input('nextOfKin.relationship'),
-                    'residence' => $request->input('nextOfKin.residence'),
-                    'contact' => [
-                        'primaryPhone' => $request->input('nextOfKin.contact.primaryPhone'),
-                        'secondaryPhone' => $request->input('nextOfKin.contact.secondaryPhone'),
-                        'emailAddress' => $request->input('nextOfKin.contact.emailAddress'),
-                    ],
-                ],
-            ]);
-
-            $residenceFields = [
-                'county' => $request->input('residence.county'),
-                'sub_county' => $request->input('residence.subCounty'),
-                'ward' => $request->input('residence.ward'),
-                'village' => $request->input('residence.village'),
-            ];
-            $residence = Residence::create($residenceFields);
-
-            $contactFields = [
-                'primary_phone' => $request->input('contact.primaryPhone'),
-                'secondary_phone' => $request->input('contact.secondaryPhone'),
-                'email' => $request->input('contact.emailAddress'),
-            ];
-            $contact = PersonContacts::create($contactFields);
-
-            $nextOfKinContact = [
-                'primary_phone' => $request->input('nextOfKin.contact.primaryPhone'),
-                'secondary_phone' => $request->input('nextOfKin.contact.secondaryPhone'),
-                'email' => $request->input('nextOfKin.contact.emailAddress'),
-            ];
-
-            $nextOfKinContact = PersonContacts::create($nextOfKinContact);
-
-            $nextOfKin = PersonNextOfKin::create([
-                'name' => $request->input('nextOfKin.name'),
-                'relationship' => $request->input('nextOfKin.relationship'),
-                'residence' => $request->input('nextOfKin.residence'),
-                'contact_id' => $nextOfKinContact->id,
-            ]);
-
-            $personIdendificationType = [
-                'identification_type' => $request->input('identifications.0.identificationType'),
-                'identification_number' => $request->input('identifications.0.identificationNumber'),
-            ];
-
-            $identification = PersonIdentificationType::create($personIdendificationType);
-
-            $houseHoldMember = HouseHoldPersonDetails::create([
-                'firstName' => $request->input('firstName'),
-                'middleName' => $request->input('middleName'),
-                'lastName' => $request->input('lastName'),
-                'nupi_number' => $request->input('nupi_number'),
-                'dateOfBirth' => $request->input('dateOfBirth'),
-                'gender' => $request->input('gender'),
-                'country' => $request->input('country'),
-                'countyOfBirth' => $request->input('countyOfBirth'),
-                'residence_id' => $residence->id,
-                'person_contact_id' => $contact->id,
-                'person_next_of_kin_id' => $nextOfKin->id,
-                'person_identifications_id' => $identification->id,
-                'is_alive' => $request->input('isAlive'),
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Household person registered successfully',
-                'data' => [
-                    'clientRegistry' => $clientRegistryResponse,
-                    'localDatabase' => $houseHoldMember,
-                ],
-            ], 201);
-        });
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'An error occurred while registering a new household person',
-            'error' => $e->getMessage(),
-        ], 500);
-    }
-}
-
-   
-    // send data to client registry function
-    public function sendDataToClientRegistry($token, $data)
-{
-    try {
-        $client = new Client();
-        $response = $client->post('https://dhpstagingapi.health.go.ke/partners/registry', [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $token,
-                'Content-Type' => 'application/json',
-            ],
-            'json' => $data,
+    {
+        $validatedData = $request->validate([
+            'firstName' => 'required|string',
+            'middleName' => 'nullable|string',
+            'lastName' => 'required|string',
+            'dateOfBirth' => 'required|date',
+            'maritalStatus' => 'required|string',
+            'gender' => 'required|string',
+            'occupation' => 'required|string',
+            'religion' => 'nullable|string',
+            'educationLevel' => 'required|string',
+            'country' => 'required|string',
+            'countyOfBirth' => 'required|string',
+            'isAlive' => 'required|boolean',
+            'originFacilityKmflCode' => 'required|string',
+            'isOnART' => 'required|boolean',
+            'nascopCCCNumber' => 'nullable|string',
+            'residence.county' => 'required|string',
+            'residence.subCounty' => 'required|string',
+            'residence.ward' => 'required|string',
+            'residence.village' => 'required|string',
+            'residence.landMark' => 'nullable|string',
+            'residence.address' => 'required|string',
+            'identifications' => 'required|array',
+            'identifications.*.CountryCode' => 'required|string',
+            'identifications.*.identificationType' => 'required|string',
+            'identifications.*.identificationNumber' => 'required|string',
+            'contact.primaryPhone' => 'required|string',
+            'contact.secondaryPhone' => 'nullable|string',
+            'contact.emailAddress' => 'nullable|email',
+            'nextOfKin.name' => 'required|string',
+            'nextOfKin.relationship' => 'required|string',
+            'nextOfKin.residence' => 'required|string',
+            'nextOfKin.contact.primaryPhone' => 'required|string',
+            'nextOfKin.contact.secondaryPhone' => 'nullable|string',
+            'nextOfKin.contact.emailAddress' => 'nullable|email',
         ]);
 
-        $statusCode = $response->getStatusCode();
-        $responseData = json_decode($response->getBody(), true);
-
-        if ($statusCode === 200) {
-            // Data saved successfully in the client registry
-            return $responseData;
-        } else {
-            // Error occurred while saving data in the client registry
-            return ['message' => 'Error saving data in the client registry', 'response' => $responseData];
+        if (!$validatedData) {
+            return response()->json(['message' => 'Invalid data'], 400);
         }
-    } catch (\Exception $e) {
-        // Exception occurred while sending data to the client registry
-        return ['message' => 'An error occurred while sending data to the client registry', 'error' => $e->getMessage()];
+
+        try {
+            return DB::transaction(function () use ($request) {
+                $tokenResponse = $this->getToken();
+                $accessToken = $tokenResponse['access_token'];
+
+
+                try {
+                    $url = 'https://dhpstagingapi.health.go.ke/partners/registry';
+                    $headers = [
+                        'Authorization: Bearer ' . $accessToken,
+                        'Content-Type: application/json',
+                    ];
+                    $data = json_encode($request->all(), JSON_UNESCAPED_UNICODE);
+
+                    $options = [
+                        'http' => [
+                            'header' => implode("\r\n", $headers),
+                            'method' => 'POST',
+                            'content' => $data,
+                        ],
+                    ];
+
+                    $context = stream_context_create($options);
+                    $response = file_get_contents($url, false, $context);
+        
+                    $statusCode = $http_response_header[0];
+                    $responseData = json_decode($response, true);
+        
+
+                    if (strpos($statusCode, '200') !== false) {
+                        // Data saved successfully in the client registry
+
+                        // // Save to the local database
+                        // $residenceFields = [
+                        //     'county' => $request->input('residence.county'),
+                        //     'sub_county' => $request->input('residence.subCounty'),
+                        //     'ward' => $request->input('residence.ward'),
+                        //     'village' => $request->input('residence.village')
+                        // ];
+                        // $residence = Residence::create($residenceFields);
+
+                        // $contactFields = [
+                        //     'primary_phone' => $request->input('contact.primaryPhone'),
+                        //     'secondary_phone' => $request->input('contact.secondaryPhone'),
+                        //     'email_address' => $request->input('contact.emailAddress'),
+                        // ];
+                        // $contact = PersonContacts::create($contactFields);
+
+                        // $nextOfKinFields = [
+                        //     'name' => $request->input('nextOfKin.name'),
+                        //     'relationship' => $request->input('nextOfKin.relationship'),
+                        //     'residence' => $request->input('nextOfKin.residence'),
+                        // ];
+                        // $nextOfKin = PersonNextOfKin::create($nextOfKinFields);
+
+                        // Save other data to the local database
+
+                        return response()->json([
+                            'success' => true,
+                            'message' => 'Household person registered successfully',
+                            'data' => [
+                                'clientRegistry' => $responseData,
+                            ],
+                        ], 201);
+                    } else {
+                        // Error occurred while saving data in the client registry
+                        return response()->json([
+                            'status' => 'error',
+                            'message' => 'Error saving data in the client registry',
+                            'response' => $responseData,
+                        ], 500);
+                    }
+                } catch (\Exception $e) {
+                    // Exception occurred while sending data to the client registry
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'An error occurred while sending data to the client registry',
+                        // get the specific error or object causing the error
+                        'error' => $e->getMessage(),
+                    ], 500);
+                }
+            });
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'An error occurred while registering a new household person',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
-}
 }
