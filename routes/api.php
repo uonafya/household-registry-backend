@@ -41,6 +41,7 @@ Route::post('login', [AuthController::class, 'login']);
 
 //client registry
 Route::get('/client/search/{countryCode}/{identifierType}/{identifier}', [ClientRegistyController::class, 'searchClient']);
+Route::post('client/save', [ClientRegistyController::class, 'savePersonToClientRegistry']);
 
 //HouseHold API endpoints
 Route::post('/households', [HouseHoldController::class, 'saveHouseHoldAndAtleastOnePerson']);

@@ -17,7 +17,7 @@ class HouseHoldPersonDetails extends Model
         'firstName',
         'middleName',
         'lastName',
-        'nupi_no',
+        'nupi_number',
         'dateOfBirth',
         'gender',
         'country',
