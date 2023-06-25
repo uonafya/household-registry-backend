@@ -101,6 +101,7 @@ class ClientRegistyController extends Controller
             'originFacilityKmflCode' => 'required|string',
             'isOnART' => 'required|boolean',
             'nascopCCCNumber' => 'nullable|string',
+            'residence' => 'required|array',
             'residence.county' => 'required|string',
             'residence.subCounty' => 'required|string',
             'residence.ward' => 'required|string',
@@ -156,38 +157,69 @@ class ClientRegistyController extends Controller
         
 
                     if (strpos($statusCode, '200') !== false) {
-                        // Data saved successfully in the client registry
+                        
+                        $clientNumber =$responseData['clientNumber'];
 
-                        // // Save to the local database
-                        // $residenceFields = [
-                        //     'county' => $request->input('residence.county'),
-                        //     'sub_county' => $request->input('residence.subCounty'),
-                        //     'ward' => $request->input('residence.ward'),
-                        //     'village' => $request->input('residence.village')
-                        // ];
-                        // $residence = Residence::create($residenceFields);
-
-                        // $contactFields = [
-                        //     'primary_phone' => $request->input('contact.primaryPhone'),
-                        //     'secondary_phone' => $request->input('contact.secondaryPhone'),
-                        //     'email_address' => $request->input('contact.emailAddress'),
-                        // ];
-                        // $contact = PersonContacts::create($contactFields);
-
-                        // $nextOfKinFields = [
-                        //     'name' => $request->input('nextOfKin.name'),
-                        //     'relationship' => $request->input('nextOfKin.relationship'),
-                        //     'residence' => $request->input('nextOfKin.residence'),
-                        // ];
-                        // $nextOfKin = PersonNextOfKin::create($nextOfKinFields);
-
-                        // Save other data to the local database
+                        $residenceFields = [
+                            'county' => $request->input('residence.county'),
+                            'sub_county' => $request->input('residence.subCounty'),
+                            'ward' => $request->input('residence.ward'),
+                            'village' => $request->input('residence.village'),
+                        ];
+                        $residence = Residence::create($residenceFields);
+            
+                        $contactFields = [
+                            'primary_phone' => $request->input('contact.primaryPhone'),
+                            'secondary_phone' => $request->input('contact.secondaryPhone'),
+                            'email' => $request->input('contact.emailAddress'),
+                        ];
+                        $contact = PersonContacts::create($contactFields);
+            
+                        $nextOfKinContact = [
+                            'primary_phone' => $request->input('nextOfKin.contact.primaryPhone'),
+                            'secondary_phone' => $request->input('nextOfKin.contact.secondaryPhone'),
+                            'email' => $request->input('nextOfKin.contact.emailAddress'),
+                        ];
+            
+                        $nextOfKinContact = PersonContacts::create($nextOfKinContact);
+            
+                        $nextOfKin = PersonNextOfKin::create([
+                            'name' => $request->input('nextOfKin.name'),
+                            'relationship' => $request->input('nextOfKin.relationship'),
+                            'residence' => $request->input('nextOfKin.residence'),
+                            'contact_id' => $nextOfKinContact->id,
+                        ]);
+            
+                        $personIdendificationType = [
+                            'identification_type' => $request->input('identifications.0.identificationType'),
+                            'identification_number' => $request->input('identifications.0.identificationNumber'),
+                        ];
+            
+                        $identification = PersonIdentificationType::create($personIdendificationType);
+            
+                        $houseHoldMember = HouseHoldPersonDetails::create([
+                            'firstName' => $request->input('firstName'),
+                            'middleName' => $request->input('middleName'),
+                            'lastName' => $request->input('lastName'),
+                            'nupi_number' => $clientNumber,
+                            'dateOfBirth' => $request->input('dateOfBirth'),
+                            'gender' => $request->input('gender'),
+                            'country' => $request->input('country'),
+                            'countyOfBirth' => $request->input('countyOfBirth'),
+                            'residence_id' => $residence->id,
+                            'person_contact_id' => $contact->id,
+                            'person_next_of_kin_id' => $nextOfKin->id,
+                            'person_identifications_id' => $identification->id,
+                            'is_alive' => $request->input('isAlive'),
+                        ]);
+            
 
                         return response()->json([
                             'success' => true,
                             'message' => 'Household person registered successfully',
                             'data' => [
                                 'clientRegistry' => $responseData,
+                                'houseHoldMember' => $houseHoldMember,
                             ],
                         ], 201);
                     } else {
@@ -204,7 +236,7 @@ class ClientRegistyController extends Controller
                         'status' => 'error',
                         'message' => 'An error occurred while sending data to the client registry',
                         // get the specific error or object causing the error
-                        'error' => $e->getMessage(),
+                        'error' => $e->getMessage() . ' '  . $e->getLine(),
                     ], 500);
                 }
             });
