@@ -20,7 +20,6 @@ class ClientRegistyController extends Controller
     private $clientId;
     private $clientSecret;
     private $scope;
-
     public function __construct()
     {
         $this->tokenEndpoint = env('CLIENT_REGISTRY_TOKEN_ENDPOINT');
@@ -28,6 +27,7 @@ class ClientRegistyController extends Controller
         $this->clientId = env('CLIENT_REGISTRY_CLIENT_ID');
         $this->clientSecret = env('CLIENT_REGISTRY_CLIENT_SECRET');
         $this->scope = env('CLIENT_REGISTRY_SCOPE');
+        $this->registry_url = env('CLIENT_REGISTRY_URL');
     }
 
 
@@ -134,7 +134,7 @@ class ClientRegistyController extends Controller
 
 
                 try {
-                    $url = 'https://dhpstagingapi.health.go.ke/partners/registry';
+                    $url = $this->searchEndpoint;
                     $headers = [
                         'Authorization: Bearer ' . $accessToken,
                         'Content-Type: application/json',
