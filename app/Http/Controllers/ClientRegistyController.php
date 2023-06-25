@@ -157,7 +157,7 @@ class ClientRegistyController extends Controller
         
 
                     if (strpos($statusCode, '200') !== false) {
-                        
+
                         $clientNumber =$responseData['clientNumber'];
 
                         $residenceFields = [
