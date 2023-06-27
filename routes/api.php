@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Controllers\GeoLocationController ;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HouseHoldController;
 use App\Http\Controllers\HouseHoldAdressController;
@@ -122,6 +122,17 @@ Route::delete('residence/{id}', [ResidenceController::class, 'destroy']);
 // Personnext model CRUD endpoints
 Route::resource('user', UserController::class);
 
+//Geo Location
+
+Route::get('/geolocations/with-children', [GeoLocationController::class, 'getAllGeolocationsWithChildren']);
+
+Route::get('/geolocations/counties', [GeoLocationController::class, 'getCounties']);
+
+Route::get('/geolocations/sub-counties/{parentAreaId}', [GeoLocationController::class, 'getSubCounties']);
+
+Route::get('/geolocations/wards/{parentAreaId}', [GeoLocationController::class, 'getWards']);
+
+Route::get('/geolocations/child-units/{areaId}', [GeoLocationController::class, 'getChildUnits']);
 
 
 
