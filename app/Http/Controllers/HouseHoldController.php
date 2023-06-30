@@ -426,4 +426,95 @@ class HouseHoldController extends Controller
             ], 500);
         }
     }
+
+    public function mergeHouseHolds(Request $request)
+    {
+        try {
+
+            $request->validate([
+                'household_id_one' => 'required|integer',
+                'household_id_two' => 'required|integer',
+                'merging_initaited_by' => 'required|integer',
+                'merging_approved_by' => 'required|integer',
+            ]);
+
+            //find the two households by id and get there members
+            $householdOne = HouseHold::where('id', $request->input('household_id_one'))->first();
+            $householdTwo = HouseHold::where('id', $request->input('household_id_two'))->first();
+
+            if (!$householdOne || !$householdTwo) {
+                return response()->json([
+                    'data' => 'Household Members not found'
+                ], 200);
+            }
+
+            $householdTwoMembers = $householdTwo->household_memberships;
+
+            foreach ($householdTwoMembers as $membership) {
+                $membership->house_hold_id = $householdOne->id;
+                $membership->save();
+            }
+            
+            // Void household two
+            $householdTwo->delete();
+
+            // Get the updated members of household one
+            $householdOneMembers = $householdOne->household_memberships;
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'householdOneMembers' => $householdOneMembers,
+                ],
+            ], 200);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to merge households',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+    // public function mergeHouseHoldsByCreatingNewHousehold(Request $request){
+    //     try{
+
+    //         $request->validate([
+    //             'household_identifier_1' => 'required|string',
+    //             'household_identifier_2' => 'required|string',
+    //             'merging_initaited_by'=> 'required|integer',
+    //             'merging_approved_by'=> 'required|integer',
+    //         ]);
+
+    //         //find the two households by id and get there members
+    //         $householdMembersOne= ;
+    //         $householdMembersTwo= ;
+
+    //         if(!$householdMembersOne || !$householdMembersTwo){
+    //             return response()->json([
+    //                 'data'=> 'Household Members not found'
+    //             ],200);
+    //         }
+
+    //         //now take the household members of household two and then change their memberType from household id of two to household id of one here is how the model of household membertype looks like
+    //         //    $householdMemberType = HouseholdMemberType::where('id', $memberData['household_member_type_id'])->first();
+    //         // $householdMembership = HouseHoldMembership::create([
+    //         //     'household_person_details_id' => $member->id,
+    //         //     'household_member_type_id' => $householdMemberType->id,
+    //         //     'house_hold_id' => $household->id,
+    //         // ]);
+    //         //loop through the mebers of household two and change their household membeship from household two to one
+    //         //then void household two 
+
+
+
+    //     }catch(\Throwable $e){
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Failed to merge households',
+    //             'error' => $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
 }

@@ -55,8 +55,10 @@ Route::get('/households/migration/pending', [HouseHoldController::class, 'getAll
 Route::post('/households/migration/approve', [HouseHoldController::class, 'approveHouseHoldMigration']);
 
 //membership
-
 Route::get('/household/{householdId}/members', [HouseHoldMembershipController::class, 'getHouseholdMembers']);
+
+//merge households
+Route::post('/households/merge',[HouseHoldController::class,'mergeHouseHolds']);
 
 
 //muting a household

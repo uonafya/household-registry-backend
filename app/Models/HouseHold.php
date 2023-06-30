@@ -49,4 +49,6 @@ class HouseHold extends Model
     {
         return $this->hasMany(HouseHoldMembership::class);
     }
+
+    
 }
