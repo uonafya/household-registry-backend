@@ -27,7 +27,6 @@ class ClientRegistyController extends Controller
         $this->clientId = env('CLIENT_REGISTRY_CLIENT_ID');
         $this->clientSecret = env('CLIENT_REGISTRY_CLIENT_SECRET');
         $this->scope = env('CLIENT_REGISTRY_SCOPE');
-        $this->registry_url = env('CLIENT_REGISTRY_URL');
     }
 
 
