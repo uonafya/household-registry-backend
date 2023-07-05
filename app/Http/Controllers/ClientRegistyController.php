@@ -50,7 +50,12 @@ class ClientRegistyController extends Controller
             $responseData = json_decode($response->getBody(), true);
 
             if ($statusCode === 200) {
-                // Client found, process the data
+               if(!$responseData['clientExists']){
+                return response()->json([
+                    "success"=>'false',
+                    'data'=>'Client not found'
+                ],404);
+               }
                 return response()->json($responseData);
             } elseif ($statusCode === 404) {
                 // Client not found
