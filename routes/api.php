@@ -59,6 +59,9 @@ Route::get('/household/{householdId}/members', [HouseHoldMembershipController::c
 
 //merge households
 Route::post('/households/merge',[HouseHoldController::class,'mergeHouseHolds']);
+Route::post('/households/merge/new',[HouseHoldController::class,'mergeHouseHoldsByCreatingNewHousehold']);
+
+
 
 
 //muting a household
